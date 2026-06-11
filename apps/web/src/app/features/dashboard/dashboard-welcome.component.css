@@ -1,0 +1,20 @@
+.welcome {
+  max-width: 40rem;
+  padding: 0.5rem 0;
+}
+
+.welcome__headline {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--crm-text-primary, #1f1f1f);
+}
+
+.welcome__subtext {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--crm-text-secondary, #5f6368);
+}

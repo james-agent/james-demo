@@ -1,1 +1,62 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global CRM theme — Gemini-inspired tokens */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Google Sans', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #1f1f1f;
+  background-color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --crm-sidebar-width: 260px;
+  --crm-bg-sidebar: #f8f9fa;
+  --crm-bg-main: #ffffff;
+  --crm-border: #e8eaed;
+  --crm-text-primary: #1f1f1f;
+  --crm-text-secondary: #5f6368;
+  --crm-nav-hover: rgba(68, 71, 70, 0.08);
+  --crm-nav-active-bg: rgba(26, 115, 232, 0.12);
+  --crm-nav-active-text: #1a73e8;
+  --crm-nav-active-accent: #1a73e8;
+}
+
+.coming-soon-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.5rem);
+  transform: translateX(-50%);
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.375rem;
+  background-color: #3c4043;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.coming-soon-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #3c4043;
+}

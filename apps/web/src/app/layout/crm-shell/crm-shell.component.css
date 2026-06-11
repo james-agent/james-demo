@@ -1,0 +1,122 @@
+.crm-shell {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--crm-bg-main, #ffffff);
+  color: var(--crm-text-primary, #1f1f1f);
+}
+
+.crm-shell__mobile-bar {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 3.5rem;
+  padding: 0 1rem;
+  background-color: var(--crm-bg-sidebar, #f8f9fa);
+  border-bottom: 1px solid var(--crm-border, #e8eaed);
+}
+
+.crm-shell__hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.crm-shell__hamburger-line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--crm-text-primary, #1f1f1f);
+  border-radius: 1px;
+}
+
+.crm-shell__brand {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.crm-shell__brand--sidebar {
+  display: block;
+  padding: 0.25rem 0.875rem;
+}
+
+.crm-shell__sidebar-header {
+  padding: 1.25rem 0.75rem 0.5rem;
+}
+
+.crm-shell__sidebar {
+  flex-shrink: 0;
+  width: var(--crm-sidebar-width, 260px);
+  background-color: var(--crm-bg-sidebar, #f8f9fa);
+  border-right: 1px solid var(--crm-border, #e8eaed);
+}
+
+.crm-shell__main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem;
+  overflow-x: hidden;
+}
+
+.crm-shell__backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .crm-shell {
+    flex-direction: column;
+    padding-top: 3.5rem;
+  }
+
+  .crm-shell__mobile-bar {
+    display: flex;
+  }
+
+  .crm-shell__sidebar-header {
+    display: none;
+  }
+
+  .crm-shell__sidebar {
+    position: fixed;
+    top: 3.5rem;
+    left: 0;
+    bottom: 0;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: none;
+  }
+
+  .crm-shell--sidebar-open .crm-shell__sidebar {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .crm-shell__backdrop {
+    display: block;
+    position: fixed;
+    inset: 3.5rem 0 0 0;
+    z-index: 150;
+    border: none;
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0.32);
+    cursor: pointer;
+  }
+
+  .crm-shell__main {
+    padding: 1.5rem 1.25rem;
+  }
+}
