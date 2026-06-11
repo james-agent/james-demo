@@ -1,0 +1,46 @@
+name: AnyJames Remote CI
+'on':
+- push
+- workflow_dispatch
+jobs:
+  remote-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Setup Poetry
+      shell: bash
+      run: 'set -euo pipefail
+
+        python -m pip install --upgrade pip
+
+        python -m pip install poetry
+
+        '
+    - name: Run remote CI checks
+      shell: bash
+      env:
+        CI: 'true'
+      run: "set -euo pipefail\n# anyjames-managed-remote-ci\necho \"AnyJames remote_ci started\"\n\nrun_node_project () {\n\
+        \  local dir=\"$1\"\n  if [ -f \"$dir/package.json\" ]; then\n    echo \"Running Node checks in $dir\"\n    (cd \"\
+        $dir\" && npm ci || npm install)\n    (cd \"$dir\" && npm run lint --if-present)\n    if [ -f \"$dir/angular.json\"\
+        \ ]; then\n      # Angular Karma (ng test / ChromeHeadless) is intentionally not run in remote CI.\n      echo \"\
+        Skipping Angular unit tests (ng test) in remote CI for $dir\"\n    else\n      (cd \"$dir\" && npm test --if-present)\n\
+        \    fi\n    (cd \"$dir\" && npm run build --if-present)\n  fi\n}\n\nif [ -f frontend/package.json ]; then\n  run_node_project\
+        \ \"frontend\"\nelse\n  run_node_project \".\"\nfi\nrun_node_project \"dashboard\"\n\nif [ -f pyproject.toml ]; then\n\
+        \  echo \"Running Python checks with Poetry\"\n  poetry config virtualenvs.in-project true\n  poetry install --extras\
+        \ dev --no-root --no-interaction --no-ansi\n  if [ -f .james/tooling/ruff.toml ]; then\n    echo \"Running Ruff with\
+        \ AnyJames tooling config\"\n    poetry run ruff check --config .james/tooling/ruff.toml .\n  fi\n  if [ -d tests\
+        \ ]; then\n    poetry run pytest -q\n  fi\n  poetry run python -m compileall -q .\nelse\n  echo \"No pyproject.toml\
+        \ found at repository root\"\nfi\n"

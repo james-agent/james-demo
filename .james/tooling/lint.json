@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "python": {
+    "ruff": {
+      "config_path": ".james/tooling/ruff.toml",
+      "check_command": [
+        "poetry",
+        "run",
+        "ruff",
+        "check",
+        "--config",
+        ".james/tooling/ruff.toml",
+        "."
+      ]
+    }
+  },
+  "node": {
+    "projects": [
+      {
+        "path": "dashboard",
+        "lint_command": "npm run lint"
+      }
+    ]
+  }
+}
