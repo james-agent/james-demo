@@ -1,0 +1,16 @@
+# AnyJames tooling — mirrors root pyproject.toml [tool.ruff]; keep in sync.
+target-version = "py312"
+line-length = 120
+
+[lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[lint.per-file-ignores]
+"james/hub/routes/pipeline_helpers.py" = ["F403", "F405"]
+"james/hub/routes/pipeline_executions_gate_routes.py" = ["F403", "F405"]
+"james/hub/routes/pipeline_executions_ops_routes.py" = ["F403", "F405"]
+"james/hub/routes/pipeline_executions_query_routes.py" = ["F403", "F405"]
+"james/hub/routes/pipeline_governance_routes.py" = ["F403", "F405"]
+"james/hub/routes/pipeline_run_routes.py" = ["F403", "F405"]
+"james/hub/services/agent_builder_service.py" = ["F403", "F405"]
