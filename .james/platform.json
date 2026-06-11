@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "platform": "anyjames",
+  "remote_ci": {
+    "enabled": true,
+    "provider": "github",
+    "workflow_path": ".github/workflows/anyjames-remote-ci.yml",
+    "managed_by": "anyjames"
+  },
+  "tooling": {
+    "lint_manifest": ".james/tooling/lint.json",
+    "ruff_config": ".james/tooling/ruff.toml"
+  }
+}
