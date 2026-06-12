@@ -1,0 +1,90 @@
+<div class="opp-shell" [class.opp-shell--seller]="role() === 'vendedor'" [class.opp-shell--manager]="role() === 'gerente'">
+  <header class="opp-shell__header">
+    <div class="opp-shell__title-block">
+      @if (role() === 'vendedor') {
+        <h1>Minhas oportunidades</h1>
+        <p class="opp-shell__subtitle">Visão do vendedor — foco em pipeline pessoal</p>
+      } @else {
+        <h1>Pipeline do time</h1>
+        <p class="opp-shell__subtitle">Visão do gerente — agregação multi-vendedor</p>
+      }
+    </div>
+
+    <div class="opp-shell__role" role="group" aria-label="Seletor de papel">
+      <span class="opp-shell__role-label">Papel:</span>
+      <button
+        type="button"
+        class="opp-btn"
+        [class.opp-btn--active]="role() === 'vendedor'"
+        (click)="setRole('vendedor')"
+      >
+        Vendedor
+      </button>
+      <button
+        type="button"
+        class="opp-btn"
+        [class.opp-btn--active]="role() === 'gerente'"
+        (click)="setRole('gerente')"
+      >
+        Gerente
+      </button>
+    </div>
+  </header>
+
+  <div class="opp-shell__toolbar">
+    <div class="opp-shell__toggle" role="group" aria-label="Alternar visualização">
+      <button
+        type="button"
+        class="opp-btn"
+        [class.opp-btn--active]="viewMode() === 'table'"
+        (click)="setViewMode('table')"
+      >
+        Tabela
+      </button>
+      <button
+        type="button"
+        class="opp-btn"
+        [class.opp-btn--active]="viewMode() === 'kanban'"
+        (click)="setViewMode('kanban')"
+      >
+        Kanban
+      </button>
+    </div>
+
+    @if (role() === 'gerente') {
+      <div class="opp-shell__filters" aria-label="Filtros do gerente">
+        <label>
+          <span>Vendedor</span>
+          <select [(ngModel)]="sellerFilter" (ngModelChange)="onSellerFilterChange()">
+            <option value="">Todos</option>
+            @for (seller of sellers; track seller) {
+              <option [value]="seller">{{ seller }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          <span>Time</span>
+          <select [(ngModel)]="teamFilter" (ngModelChange)="onTeamFilterChange()">
+            <option value="">Todos</option>
+            @for (team of teams; track team) {
+              <option [value]="team">{{ team }}</option>
+            }
+          </select>
+        </label>
+        <button type="button" class="opp-btn" (click)="clearManagerFilters()">Limpar filtros</button>
+      </div>
+    }
+
+    <a routerLink="/inception_no_prod/crm/opportunities/new" class="opp-btn opp-btn--primary">Nova oportunidade</a>
+  </div>
+
+  @if (viewMode() === 'table') {
+    <app-opportunity-list-inception (toast)="onToast($event)" />
+  } @else {
+    <app-opportunity-kanban-inception (toast)="onToast($event)" />
+  }
+
+  @if (toastMessage) {
+    <div class="opp-toast" role="status">{{ toastMessage }}</div>
+  }
+</div>

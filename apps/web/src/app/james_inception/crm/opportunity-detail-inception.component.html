@@ -1,0 +1,65 @@
+@if (opportunity) {
+  <div class="opp-detail">
+    <header class="opp-detail__header">
+      <a routerLink="/inception_no_prod/crm/opportunities" class="opp-detail__back">← Voltar</a>
+      <h1>{{ opportunity.name }}</h1>
+      <div class="opp-detail__actions">
+        <a [routerLink]="['/inception_no_prod/crm/opportunities', opportunity.id, 'edit']" class="opp-detail__btn">
+          Editar
+        </a>
+      </div>
+    </header>
+
+    <section class="opp-detail__section">
+      <h2>Dados principais</h2>
+      <dl class="opp-detail__grid">
+        <div><dt>Conta</dt><dd>{{ opportunity.account }}</dd></div>
+        <div><dt>Valor total</dt><dd>{{ formatCurrency(opportunity.value) }}</dd></div>
+        <div><dt>Estágio</dt><dd>{{ stageLabel(opportunity.stage) }}</dd></div>
+        <div><dt>Probabilidade</dt><dd>{{ opportunity.probability }}%</dd></div>
+        <div><dt>Data fechamento</dt><dd>{{ formatDate(opportunity.closeDate) }}</dd></div>
+        <div><dt>Responsável</dt><dd>{{ opportunity.owner }}</dd></div>
+        <div><dt>Descrição</dt><dd>{{ opportunity.description || '—' }}</dd></div>
+        <div><dt>Próximo passo</dt><dd>{{ opportunity.nextStep || '—' }}</dd></div>
+      </dl>
+    </section>
+
+    <section class="opp-detail__section">
+      <h2>Linhas de produto</h2>
+      @if (opportunity.productLines.length === 0) {
+        <p class="opp-detail__empty">Sem linhas de produto.</p>
+      } @else {
+        <table class="opp-detail__table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantidade</th>
+              <th>Preço unitário</th>
+              <th>Total linha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (line of opportunity.productLines; track line.id) {
+              <tr>
+                <td>{{ line.item }}</td>
+                <td>{{ line.quantity }}</td>
+                <td>{{ formatCurrency(line.unitPrice) }}</td>
+                <td>{{ formatCurrency(lineTotal(line)) }}</td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="3">Total geral</th>
+              <th>{{ formatCurrency(opportunity.value) }}</th>
+            </tr>
+          </tfoot>
+        </table>
+      }
+    </section>
+  </div>
+}
+
+@if (toastMessage) {
+  <div class="opp-detail__toast" role="status">{{ toastMessage }}</div>
+}

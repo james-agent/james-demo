@@ -1,0 +1,92 @@
+.opp-kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.opp-kanban__column {
+  background: #f8f9fa;
+  border: 1px solid var(--crm-border, #e8eaed);
+  border-radius: 8px;
+  min-height: 280px;
+}
+
+.opp-kanban__column-header {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--crm-border, #e8eaed);
+}
+
+.opp-kanban__column-header h2 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.opp-kanban__meta {
+  font-size: 0.75rem;
+  color: var(--crm-text-secondary, #5f6368);
+}
+
+.opp-kanban__list {
+  padding: 0.5rem;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.opp-kanban__card {
+  background: #fff;
+  border: 1px solid var(--crm-border, #e8eaed);
+  border-radius: 6px;
+  cursor: grab;
+}
+
+.opp-kanban__card:active {
+  cursor: grabbing;
+}
+
+.opp-kanban__card-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.625rem;
+  text-decoration: none;
+  color: inherit;
+  font-size: 0.8125rem;
+}
+
+.opp-kanban__card-link strong {
+  font-size: 0.875rem;
+}
+
+.opp-kanban__owner {
+  color: var(--crm-text-secondary, #5f6368);
+  font-size: 0.75rem;
+}
+
+.opp-kanban__empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--crm-text-secondary, #5f6368);
+}
+
+.opp-kanban__cta {
+  display: inline-block;
+  margin-top: 0.75rem;
+  color: #1a73e8;
+}
+
+.cdk-drag-preview {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.4;
+}
+
+.cdk-drop-list-dragging .opp-kanban__card:not(.cdk-drag-placeholder) {
+  transition: transform 200ms ease;
+}

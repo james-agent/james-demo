@@ -1,0 +1,39 @@
+@if (opportunities.length === 0) {
+  <div class="opp-list__empty" role="status">
+    <p>Nenhuma oportunidade encontrada.</p>
+    <a routerLink="/inception_no_prod/crm/opportunities/new" class="opp-list__cta">Criar oportunidade</a>
+  </div>
+} @else {
+  <div class="opp-list__wrap">
+    <table class="opp-list__table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Conta</th>
+          <th>Valor</th>
+          <th>Estágio</th>
+          <th>Probabilidade</th>
+          <th>Data fechamento</th>
+          <th>Responsável</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (opp of opportunities; track opp.id) {
+          <tr>
+            <td>
+              <a [routerLink]="['/inception_no_prod/crm/opportunities', opp.id]" class="opp-list__link">
+                {{ opp.name }}
+              </a>
+            </td>
+            <td>{{ opp.account }}</td>
+            <td>{{ formatCurrency(opp.value) }}</td>
+            <td>{{ stageLabel(opp.stage) }}</td>
+            <td>{{ opp.probability }}%</td>
+            <td>{{ formatDate(opp.closeDate) }}</td>
+            <td>{{ opp.owner }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
