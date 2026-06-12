@@ -32,12 +32,20 @@ describe('SidebarComponent', () => {
     expect(accountsLink?.getAttribute('href')).toBe('/accounts');
   });
 
+  it('links Oportunidades to inception opportunities route', () => {
+    const opportunitiesLink = Array.from(
+      fixture.nativeElement.querySelectorAll('.sidebar-nav__link') as NodeListOf<HTMLAnchorElement>,
+    ).find((el) => el.textContent?.trim() === 'Oportunidades');
+
+    expect(opportunitiesLink?.getAttribute('href')).toBe('/inception_no_prod/crm/opportunities');
+  });
+
   it('applies disabled styling to placeholder items', () => {
     const disabledLinks = fixture.nativeElement.querySelectorAll(
       '.sidebar-nav__link--disabled',
     );
 
-    expect(disabledLinks.length).toBe(6);
+    expect(disabledLinks.length).toBe(5);
   });
 
   it('shows Coming soon tooltip when a placeholder item is clicked', () => {

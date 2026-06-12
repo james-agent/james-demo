@@ -1,0 +1,111 @@
+<div class="opp-form">
+  <header class="opp-form__header">
+    <h1>{{ isEdit ? 'Editar oportunidade' : 'Nova oportunidade' }}</h1>
+    <a routerLink="/inception_no_prod/crm/opportunities" class="opp-form__back">Cancelar</a>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <section class="opp-form__section">
+      <label>
+        <span>Nome *</span>
+        <input type="text" formControlName="name" />
+        @if (form.get('name')?.invalid && form.get('name')?.touched) {
+          <span class="opp-form__error">Nome é obrigatório</span>
+        }
+      </label>
+
+      <label>
+        <span>Conta</span>
+        <input type="text" formControlName="account" />
+      </label>
+
+      <label>
+        <span>Estágio</span>
+        <select formControlName="stage">
+          @for (stage of stages; track stage) {
+            <option [value]="stage">{{ stageLabel(stage) }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>Probabilidade (%)</span>
+        <input type="number" formControlName="probability" min="0" max="100" />
+      </label>
+
+      <label>
+        <span>Data fechamento</span>
+        <input type="date" formControlName="closeDate" />
+      </label>
+
+      <label>
+        <span>Responsável</span>
+        <select formControlName="owner">
+          @for (seller of sellers; track seller) {
+            <option [value]="seller">{{ seller }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>Time</span>
+        <select formControlName="ownerTeam">
+          @for (team of teams; track team) {
+            <option [value]="team">{{ team }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="opp-form__full">
+        <span>Descrição</span>
+        <textarea formControlName="description" rows="3"></textarea>
+      </label>
+
+      <label class="opp-form__full">
+        <span>Próximo passo</span>
+        <input type="text" formControlName="nextStep" />
+      </label>
+    </section>
+
+    <section class="opp-form__section">
+      <div class="opp-form__lines-header">
+        <h2>Linhas de produto</h2>
+        <button type="button" class="opp-form__btn" (click)="addProductLine()">Adicionar linha</button>
+      </div>
+
+      <div formArrayName="productLines">
+        @for (line of productLines.controls; track line; let i = $index) {
+          <div class="opp-form__line" [formGroupName]="i">
+            <label>
+              <span>Item</span>
+              <input type="text" formControlName="item" />
+            </label>
+            <label>
+              <span>Quantidade</span>
+              <input type="number" formControlName="quantity" min="1" />
+            </label>
+            <label>
+              <span>Preço unitário</span>
+              <input type="number" formControlName="unitPrice" min="0" step="0.01" />
+            </label>
+            <span class="opp-form__line-total">{{ formatCurrency(lineTotalAt(i)) }}</span>
+            <button type="button" class="opp-form__btn" (click)="removeProductLine(i)" [disabled]="productLines.length <= 1">
+              Remover
+            </button>
+          </div>
+        }
+      </div>
+
+      <p class="opp-form__grand-total">Total geral: <strong>{{ formatCurrency(grandTotal()) }}</strong></p>
+    </section>
+
+    <footer class="opp-form__footer">
+      <button type="button" class="opp-form__btn" (click)="cancel()">Cancelar</button>
+      <button type="submit" class="opp-form__btn opp-form__btn--primary">Salvar</button>
+    </footer>
+  </form>
+</div>
+
+@if (toastMessage) {
+  <div class="opp-form__toast" role="status">{{ toastMessage }}</div>
+}

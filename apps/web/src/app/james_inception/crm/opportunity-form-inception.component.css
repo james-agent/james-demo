@@ -1,0 +1,124 @@
+.opp-form {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.opp-form__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.opp-form__header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.opp-form__back {
+  color: #1a73e8;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.opp-form__section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--crm-border, #e8eaed);
+  border-radius: 8px;
+}
+
+.opp-form__section label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.opp-form__full {
+  grid-column: 1 / -1;
+}
+
+.opp-form__section input,
+.opp-form__section select,
+.opp-form__section textarea {
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--crm-border, #e8eaed);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.opp-form__error {
+  color: #c5221f;
+  font-size: 0.75rem;
+}
+
+.opp-form__lines-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.opp-form__lines-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.opp-form__line {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto auto;
+  gap: 0.5rem;
+  align-items: end;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--crm-border, #e8eaed);
+}
+
+.opp-form__line-total {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding-bottom: 0.375rem;
+}
+
+.opp-form__grand-total {
+  grid-column: 1 / -1;
+  font-size: 0.9375rem;
+}
+
+.opp-form__footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.opp-form__btn {
+  border: 1px solid var(--crm-border, #e8eaed);
+  background: #fff;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.opp-form__btn--primary {
+  background: #1a73e8;
+  border-color: #1a73e8;
+  color: #fff;
+}
+
+.opp-form__toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: #323232;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  z-index: 1100;
+}

@@ -1,0 +1,37 @@
+@if (isEmpty()) {
+  <div class="opp-kanban__empty" role="status">
+    <p>Nenhuma oportunidade neste pipeline.</p>
+    <a routerLink="/inception_no_prod/crm/opportunities/new" class="opp-kanban__cta">Criar oportunidade</a>
+  </div>
+} @else {
+  <div class="opp-kanban">
+    @for (stage of stages; track stage) {
+      <div class="opp-kanban__column">
+        <header class="opp-kanban__column-header">
+          <h2>{{ stageLabel(stage) }}</h2>
+          <span class="opp-kanban__meta">
+            {{ stageColumns[stage].length }} · {{ formatCurrency(columnTotal(stage)) }}
+          </span>
+        </header>
+        <div
+          class="opp-kanban__list"
+          cdkDropList
+          [id]="stage"
+          [cdkDropListData]="stageColumns[stage]"
+          (cdkDropListDropped)="onDrop($event)"
+        >
+          @for (opp of stageColumns[stage]; track opp.id) {
+            <article class="opp-kanban__card" cdkDrag [cdkDragData]="opp">
+              <a [routerLink]="['/inception_no_prod/crm/opportunities', opp.id]" class="opp-kanban__card-link">
+                <strong>{{ opp.name }}</strong>
+                <span>{{ opp.account }}</span>
+                <span>{{ formatCurrency(opp.value) }}</span>
+                <span class="opp-kanban__owner">{{ opp.owner }}</span>
+              </a>
+            </article>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
