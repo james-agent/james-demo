@@ -3,26 +3,36 @@
 from __future__ import annotations
 
 import json
+from functools import lru_cache
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
 
 router = APIRouter(tags=["health"])
 
-_REPO_ROOT = Path(__file__).resolve().parents[4]
-_JAMES_ROOT = _REPO_ROOT / ".james"
-_PLATFORM_JSON = _JAMES_ROOT / "platform.json"
-_REMOTE_CI_WORKFLOW = _REPO_ROOT / ".github" / "workflows" / "anyjames-remote-ci.yml"
 _MANAGED_MARKER = "anyjames-managed-remote-ci"
 
-_REQUIRED_JAMES_PATHS = (
-    _JAMES_ROOT / "README.md",
-    _PLATFORM_JSON,
-    _JAMES_ROOT / "state" / ".gitkeep",
-    _JAMES_ROOT / "audit" / ".gitkeep",
-    _JAMES_ROOT / "tooling" / "ruff.toml",
-    _JAMES_ROOT / "tooling" / "lint.json",
-)
+
+@lru_cache
+def _repo_root() -> Path:
+    """Resolve monorepo root locally or fall back to the API app root in Docker."""
+    start = Path(__file__).resolve()
+    for parent in start.parents:
+        if (parent / ".james" / "platform.json").is_file():
+            return parent
+    return start.parents[2]
+
+
+def _required_james_paths() -> tuple[Path, ...]:
+    james_root = _repo_root() / ".james"
+    return (
+        james_root / "README.md",
+        james_root / "platform.json",
+        james_root / "state" / ".gitkeep",
+        james_root / "audit" / ".gitkeep",
+        james_root / "tooling" / "ruff.toml",
+        james_root / "tooling" / "lint.json",
+    )
 
 
 @router.get("/health")
@@ -32,8 +42,13 @@ async def health_check() -> dict[str, str]:
 
 
 def _validate_james_bootstrap() -> dict[str, object]:
+    repo_root = _repo_root()
+    platform_json = repo_root / ".james" / "platform.json"
+    remote_ci_workflow = repo_root / ".github" / "workflows" / "anyjames-remote-ci.yml"
+    required_paths = _required_james_paths()
+
     missing = [
-        str(path.relative_to(_REPO_ROOT)) for path in _REQUIRED_JAMES_PATHS if not path.is_file()
+        str(path.relative_to(repo_root)) for path in required_paths if not path.is_file()
     ]
     if missing:
         raise HTTPException(
@@ -42,7 +57,7 @@ def _validate_james_bootstrap() -> dict[str, object]:
         )
 
     try:
-        manifest = json.loads(_PLATFORM_JSON.read_text(encoding="utf-8"))
+        manifest = json.loads(platform_json.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise HTTPException(
             status_code=503,
@@ -76,12 +91,12 @@ def _validate_james_bootstrap() -> dict[str, object]:
             },
         )
 
-    if not _REMOTE_CI_WORKFLOW.is_file():
+    if not remote_ci_workflow.is_file():
         raise HTTPException(
             status_code=503,
             detail={"status": "degraded", "reason": "missing_workflow_file"},
         )
-    workflow_content = _REMOTE_CI_WORKFLOW.read_text(encoding="utf-8")
+    workflow_content = remote_ci_workflow.read_text(encoding="utf-8")
     if _MANAGED_MARKER not in workflow_content:
         raise HTTPException(
             status_code=503,

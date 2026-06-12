@@ -11,6 +11,15 @@ export const routes: Routes = [
   {
     path: '',
     component: CrmShellComponent,
-    children: [{ path: '', component: DashboardWelcomeComponent }],
+    children: [
+      { path: '', component: DashboardWelcomeComponent },
+      {
+        path: 'accounts',
+        loadComponent: () =>
+          import('./james_inception/crm/customer-list.component').then(
+            (m) => m.CustomerListComponent,
+          ),
+      },
+    ],
   },
 ];
