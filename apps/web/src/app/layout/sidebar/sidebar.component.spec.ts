@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { SidebarComponent } from './sidebar.component';
 import { NAV_MENU_ITEMS } from './nav-menu.config';
 
@@ -8,6 +9,7 @@ describe('SidebarComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SidebarComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SidebarComponent);
@@ -22,12 +24,12 @@ describe('SidebarComponent', () => {
     expect(labels).toEqual(NAV_MENU_ITEMS.map((item) => item.label));
   });
 
-  it('marks Dashboard as active', () => {
-    const activeLink = fixture.nativeElement.querySelector(
-      '.sidebar-nav__link--active',
-    ) as HTMLElement;
+  it('links Accounts to the customer list route', () => {
+    const accountsLink = Array.from(
+      fixture.nativeElement.querySelectorAll('.sidebar-nav__link') as NodeListOf<HTMLAnchorElement>,
+    ).find((el) => el.textContent?.trim() === 'Accounts');
 
-    expect(activeLink?.textContent?.trim()).toBe('Dashboard');
+    expect(accountsLink?.getAttribute('href')).toBe('/accounts');
   });
 
   it('applies disabled styling to placeholder items', () => {
@@ -35,7 +37,7 @@ describe('SidebarComponent', () => {
       '.sidebar-nav__link--disabled',
     );
 
-    expect(disabledLinks.length).toBe(7);
+    expect(disabledLinks.length).toBe(6);
   });
 
   it('shows Coming soon tooltip when a placeholder item is clicked', () => {

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NAV_MENU_ITEMS, NavMenuItem } from './nav-menu.config';
 import { ComingSoonDirective } from '../../shared/coming-soon/coming-soon.directive';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [ComingSoonDirective],
+  imports: [RouterLink, RouterLinkActive, ComingSoonDirective],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })

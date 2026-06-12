@@ -1,0 +1,126 @@
+<div class="crm-list">
+  <header class="crm-list__header">
+    <h1>{{ i18n.t('title') }}</h1>
+    <label class="crm-list__locale">
+      <span>{{ i18n.t('localeLabel') }}</span>
+      <select
+        [ngModel]="i18n.locale()"
+        (ngModelChange)="onLocaleChange($event)"
+      >
+        <option value="en-US">en-US</option>
+        <option value="pt-BR">pt-BR</option>
+      </select>
+    </label>
+  </header>
+
+  <p class="crm-list__demo-note">{{ i18n.t('demoNote') }}</p>
+
+  <section class="crm-list__filters" aria-label="Customer filters">
+    <label>
+      <span>{{ i18n.t('filterName') }}</span>
+      <input type="text" [(ngModel)]="filterName" (ngModelChange)="onFilterInput()" />
+    </label>
+    <label>
+      <span>{{ i18n.t('filterEmail') }}</span>
+      <input type="email" [(ngModel)]="filterEmail" (ngModelChange)="onFilterInput()" />
+    </label>
+    <label>
+      <span>{{ i18n.t('filterFreeSearch') }}</span>
+      <input type="search" [(ngModel)]="filterQ" (ngModelChange)="onFilterInput()" />
+    </label>
+    <button type="button" class="crm-btn" (click)="clearFilters()">{{ i18n.t('clearFilters') }}</button>
+  </section>
+
+  @if (loadState === 'loading') {
+    <div class="crm-list__status" role="status">{{ i18n.t('loading') }}</div>
+  } @else if (loadState === 'error') {
+    <div class="crm-list__status crm-list__status--error" role="alert">
+      <p>{{ i18n.t('errorLoad') }}</p>
+      <button type="button" class="crm-btn crm-btn--primary" (click)="retry()">{{ i18n.t('retry') }}</button>
+    </div>
+  } @else if (loadState === 'empty') {
+    <div class="crm-list__status" role="status">{{ emptyMessage }}</div>
+  } @else if (loadState === 'ready') {
+    <div class="crm-list__table-wrap">
+      <table class="crm-list__table">
+        <thead>
+          <tr>
+            <th>{{ i18n.t('colName') }}</th>
+            <th>{{ i18n.t('colEmail') }}</th>
+            <th>{{ i18n.t('colCompany') }}</th>
+            <th>{{ i18n.t('colCountry') }}</th>
+            <th>{{ i18n.t('colState') }}</th>
+            <th>{{ i18n.t('colStatus') }}</th>
+            <th>{{ i18n.t('colWarm') }}</th>
+            <th>{{ i18n.t('colInclusion') }}</th>
+            <th>{{ i18n.t('colLastComm') }}</th>
+            <th>{{ i18n.t('colPhone') }}</th>
+            <th>{{ i18n.t('colSegment') }}</th>
+            <th>{{ i18n.t('colOwner') }}</th>
+            <th>{{ i18n.t('colLeadSource') }}</th>
+            <th>{{ i18n.t('colActions') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (customer of customers; track customer.id) {
+            <tr>
+              <td>{{ displayValue(customer.name) }}</td>
+              <td>{{ displayValue(customer.email) }}</td>
+              <td>{{ displayValue(customer.company) }}</td>
+              <td>{{ displayValue(customer.country) }}</td>
+              <td>{{ displayValue(customer.state) }}</td>
+              <td>{{ displayValue(customer.status) }}</td>
+              <td>{{ i18n.warmLabel(customer.warmStatus) }}</td>
+              <td>{{ i18n.formatDate(customer.inclusionDate) }}</td>
+              <td>{{ i18n.formatDate(customer.lastCommunicationDate) }}</td>
+              <td>{{ displayValue(customer.phone) }}</td>
+              <td>{{ displayValue(customer.segment) }}</td>
+              <td>{{ displayValue(customer.accountOwner) }}</td>
+              <td>{{ displayValue(customer.leadSource) }}</td>
+              <td>
+                <button type="button" class="crm-btn crm-btn--link" (click)="openDetail(customer.id)">
+                  {{ i18n.t('viewDetail') }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="crm-list__pagination">
+      <span>{{ i18n.t('pageOf', { page, total: totalPages || 1 }) }}</span>
+      <span>{{ i18n.t('totalRecords', { count: totalItems }) }}</span>
+      <label>
+        <select [ngModel]="pageSize" (ngModelChange)="changePageSize($event)">
+          @for (size of pageSizes; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </label>
+      <div class="crm-list__page-buttons">
+        <button type="button" class="crm-btn" [disabled]="page <= 1" (click)="changePage(page - 1)">‹</button>
+        <button
+          type="button"
+          class="crm-btn"
+          [disabled]="page >= totalPages"
+          (click)="changePage(page + 1)"
+        >
+          ›
+        </button>
+      </div>
+    </footer>
+  }
+
+  @if (toastMessage) {
+    <div class="crm-list__toast" role="status">{{ toastMessage }}</div>
+  }
+
+  <app-customer-detail-modal
+    [open]="modalOpen"
+    [customerId]="selectedCustomerId"
+    (closed)="closeModal()"
+    (customerUpdated)="onCustomerUpdated()"
+    (toast)="onModalToast($event)"
+  />
+</div>

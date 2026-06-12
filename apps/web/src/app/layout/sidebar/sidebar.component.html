@@ -2,18 +2,27 @@
   <ul class="sidebar-nav__list">
     @for (item of menuItems; track item.id) {
       <li class="sidebar-nav__item">
-        <button
-          type="button"
-          class="sidebar-nav__link"
-          [class.sidebar-nav__link--active]="item.active"
-          [class.sidebar-nav__link--disabled]="item.disabled"
-          [attr.aria-current]="item.active ? 'page' : null"
-          [attr.aria-disabled]="item.disabled ? 'true' : null"
-          [appComingSoon]="item.disabled"
-          (click)="onItemClick(item, $event)"
-        >
-          {{ item.label }}
-        </button>
+        @if (item.disabled) {
+          <button
+            type="button"
+            class="sidebar-nav__link sidebar-nav__link--disabled"
+            [attr.aria-disabled]="true"
+            [appComingSoon]="true"
+            (click)="onItemClick(item, $event)"
+          >
+            {{ item.label }}
+          </button>
+        } @else {
+          <a
+            class="sidebar-nav__link"
+            [routerLink]="item.route"
+            routerLinkActive="sidebar-nav__link--active"
+            [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+            [attr.aria-current]="null"
+          >
+            {{ item.label }}
+          </a>
+        }
       </li>
     }
   </ul>
