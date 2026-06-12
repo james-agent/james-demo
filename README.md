@@ -18,7 +18,10 @@ james-demo/
 │   │   ├── Dockerfile
 │   │   └── requirements.txt
 │   └── web/                 # CRM Angular frontend (Angular 19)
-│       ├── src/
+│       ├── src/app/
+│       │   ├── layout/      # CRM shell + sidebar
+│       │   ├── features/    # Dashboard welcome view
+│       │   └── shared/      # Coming soon tooltip directive
 │       ├── proxy.conf.json  # Dev proxy: /api → CRM API
 │       └── Dockerfile
 ├── infra/
@@ -63,7 +66,7 @@ docker compose up --build
 | Check | Command / URL | Expected result |
 |-------|---------------|-----------------|
 | API health | `curl http://localhost:8000/health` | `{"status":"ok","service":"crm-api"}` |
-| Frontend | Open [http://localhost:4200](http://localhost:4200) | Angular default welcome page |
+| Frontend | Open [http://localhost:4200](http://localhost:4200) | CRM landing shell with Gemini-style sidebar and welcome dashboard |
 | PostgreSQL | Service `db` healthy in `docker compose ps` | `healthy` status |
 
 > Port numbers follow `.env` (`API_PORT`, `WEB_PORT`, `POSTGRES_PORT`). Defaults: API **8000**, web **4200**, Postgres **5432**.
@@ -126,6 +129,30 @@ For product owners and stakeholders:
 - No database migrations (Alembic) or CI pipeline
 
 These will be addressed in follow-up stories.
+
+## CRM landing dashboard (JAMESD-3)
+
+The post-login index route at `/` renders a CRM shell in `apps/web/`:
+
+- **Sidebar:** eight English menu labels (Dashboard active; Leads–Settings are disabled placeholders with “Coming soon” tooltip).
+- **Main area:** “Welcome back” headline and “Your CRM dashboard is ready” subtext.
+- **Responsive:** hamburger menu collapses the sidebar on viewports ≤768px.
+- **No auth guard** on the index route in this phase.
+
+Run locally:
+
+```bash
+cd apps/web
+npm install
+npm start
+```
+
+Run unit tests:
+
+```bash
+cd apps/web
+npm test -- --no-watch --browsers=ChromeHeadless
+```
 
 ## Troubleshooting
 

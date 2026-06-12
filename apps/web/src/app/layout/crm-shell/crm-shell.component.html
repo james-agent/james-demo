@@ -1,0 +1,36 @@
+<div class="crm-shell" [class.crm-shell--sidebar-open]="sidebarOpen">
+  <header class="crm-shell__mobile-bar">
+    <button
+      type="button"
+      class="crm-shell__hamburger"
+      aria-label="Toggle navigation menu"
+      [attr.aria-expanded]="sidebarOpen"
+      (click)="toggleSidebar()"
+    >
+      <span class="crm-shell__hamburger-line"></span>
+      <span class="crm-shell__hamburger-line"></span>
+      <span class="crm-shell__hamburger-line"></span>
+    </button>
+    <span class="crm-shell__brand">CRM</span>
+  </header>
+
+  @if (sidebarOpen) {
+    <button
+      type="button"
+      class="crm-shell__backdrop"
+      aria-label="Close navigation menu"
+      (click)="closeSidebar()"
+    ></button>
+  }
+
+  <aside class="crm-shell__sidebar" aria-label="Sidebar">
+    <div class="crm-shell__sidebar-header">
+      <span class="crm-shell__brand crm-shell__brand--sidebar">CRM</span>
+    </div>
+    <app-sidebar></app-sidebar>
+  </aside>
+
+  <main class="crm-shell__main">
+    <router-outlet />
+  </main>
+</div>

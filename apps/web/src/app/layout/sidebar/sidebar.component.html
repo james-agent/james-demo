@@ -1,0 +1,20 @@
+<nav class="sidebar-nav" aria-label="CRM navigation">
+  <ul class="sidebar-nav__list">
+    @for (item of menuItems; track item.id) {
+      <li class="sidebar-nav__item">
+        <button
+          type="button"
+          class="sidebar-nav__link"
+          [class.sidebar-nav__link--active]="item.active"
+          [class.sidebar-nav__link--disabled]="item.disabled"
+          [attr.aria-current]="item.active ? 'page' : null"
+          [attr.aria-disabled]="item.disabled ? 'true' : null"
+          [appComingSoon]="item.disabled"
+          (click)="onItemClick(item, $event)"
+        >
+          {{ item.label }}
+        </button>
+      </li>
+    }
+  </ul>
+</nav>
