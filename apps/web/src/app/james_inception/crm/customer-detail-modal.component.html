@@ -1,0 +1,94 @@
+@if (open) {
+  <div class="crm-modal__backdrop" (click)="onBackdropClick($event)" role="presentation">
+    <div
+      class="crm-modal"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="i18n.t('modalTitle')"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="crm-modal__header">
+        <h2>{{ i18n.t('modalTitle') }}</h2>
+        <button type="button" class="crm-modal__close" (click)="close()" [attr.aria-label]="i18n.t('close')">
+          ×
+        </button>
+      </header>
+
+      @if (loading) {
+        <div class="crm-modal__loading">{{ i18n.t('loading') }}</div>
+      } @else if (error) {
+        <div class="crm-modal__error" role="alert">{{ error }}</div>
+      } @else if (customer) {
+        <div class="crm-modal__body">
+          <dl class="crm-modal__fields">
+            <div><dt>{{ i18n.t('colName') }}</dt><dd>{{ customer.name }}</dd></div>
+            <div><dt>{{ i18n.t('colEmail') }}</dt><dd>{{ customer.email }}</dd></div>
+            <div><dt>{{ i18n.t('colCompany') }}</dt><dd>{{ customer.company }}</dd></div>
+            <div><dt>{{ i18n.t('colCountry') }}</dt><dd>{{ customer.country }}</dd></div>
+            <div><dt>{{ i18n.t('colState') }}</dt><dd>{{ customer.state || '—' }}</dd></div>
+            <div><dt>{{ i18n.t('colStatus') }}</dt><dd>{{ customer.status }}</dd></div>
+            <div>
+              <dt>{{ i18n.t('colWarm') }}</dt>
+              <dd>
+                <select
+                  [ngModel]="customer.warmStatus"
+                  (ngModelChange)="onWarmChange($event)"
+                  class="crm-modal__select"
+                >
+                  <option value="Hot">{{ i18n.t('warmHot') }}</option>
+                  <option value="Warm">{{ i18n.t('warmWarm') }}</option>
+                </select>
+              </dd>
+            </div>
+            <div><dt>{{ i18n.t('colInclusion') }}</dt><dd>{{ i18n.formatDate(customer.inclusionDate) }}</dd></div>
+            <div>
+              <dt>{{ i18n.t('colLastComm') }}</dt>
+              <dd>{{ i18n.formatDate(customer.lastCommunicationDate) }}</dd>
+            </div>
+            <div><dt>{{ i18n.t('colPhone') }}</dt><dd>{{ customer.phone }}</dd></div>
+            <div><dt>{{ i18n.t('colSegment') }}</dt><dd>{{ customer.segment }}</dd></div>
+            <div><dt>{{ i18n.t('colOwner') }}</dt><dd>{{ customer.accountOwner }}</dd></div>
+            <div><dt>{{ i18n.t('colLeadSource') }}</dt><dd>{{ customer.leadSource }}</dd></div>
+          </dl>
+
+          <section class="crm-modal__comments">
+            <h3>{{ i18n.t('comments') }}</h3>
+            @if (customer.comments.length === 0) {
+              <p class="crm-modal__empty">{{ i18n.t('noComments') }}</p>
+            } @else {
+              <ul class="crm-modal__comment-list">
+                @for (comment of customer.comments; track comment.id) {
+                  <li>
+                    <div class="crm-modal__comment-meta">
+                      <strong>{{ comment.author }}</strong>
+                      <span>{{ i18n.formatDate(comment.createdAt) }}</span>
+                      @if (comment.isSession) {
+                        <span class="crm-modal__badge">{{ i18n.t('newBadge') }}</span>
+                      }
+                    </div>
+                    <p>{{ comment.text }}</p>
+                  </li>
+                }
+              </ul>
+            }
+
+            <div class="crm-modal__comment-form">
+              <textarea
+                [(ngModel)]="commentText"
+                [placeholder]="i18n.t('commentPlaceholder')"
+                maxlength="500"
+                rows="3"
+              ></textarea>
+              @if (commentError) {
+                <p class="crm-modal__field-error" role="alert">{{ commentError }}</p>
+              }
+              <button type="button" class="crm-btn crm-btn--primary" (click)="addComment()">
+                {{ i18n.t('addComment') }}
+              </button>
+            </div>
+          </section>
+        </div>
+      }
+    </div>
+  </div>
+}

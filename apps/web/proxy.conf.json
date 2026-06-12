@@ -3,9 +3,6 @@
     "target": "http://api:8000",
     "secure": false,
     "changeOrigin": true,
-    "pathRewrite": {
-      "^/api": ""
-    },
     "logLevel": "debug"
   }
 }
