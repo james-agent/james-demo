@@ -28,7 +28,9 @@ def customer_tag(customer_id: UUID) -> str:
 
 def _get_or_create_sync_row(session: Session, customer: Customer) -> Q2CustomerSync:
     tag = customer_tag(customer.id)
-    row = session.scalar(select(Q2CustomerSync).where(Q2CustomerSync.customer_id == customer.id))
+    row = session.scalar(
+        select(Q2CustomerSync).where(Q2CustomerSync.customer_id == customer.id)
+    )
     if row is None:
         row = Q2CustomerSync(customer_id=customer.id, tag=tag, sync_status="pending")
         session.add(row)
@@ -36,7 +38,9 @@ def _get_or_create_sync_row(session: Session, customer: Customer) -> Q2CustomerS
     return row
 
 
-def _mark_synced(row: Q2CustomerSync, q2_customer_id: str | None, kyc_status: str | None) -> None:
+def _mark_synced(
+    row: Q2CustomerSync, q2_customer_id: str | None, kyc_status: str | None
+) -> None:
     row.sync_status = "synced"
     row.q2_customer_id = q2_customer_id
     row.kyc_status = kyc_status
@@ -59,7 +63,9 @@ class CustomerSyncService:
     def __init__(self, q2_service: Q2CustomerService | None = None) -> None:
         self.q2_service = q2_service or Q2CustomerService()
 
-    def sync_one(self, session: Session, customer: Customer, *, mode: SyncMode = "full") -> str:
+    def sync_one(
+        self, session: Session, customer: Customer, *, mode: SyncMode = "full"
+    ) -> str:
         row = _get_or_create_sync_row(session, customer)
         if not _should_process(row, mode):
             return "skipped"
@@ -87,7 +93,9 @@ class CustomerSyncService:
             logger.warning("Q2 sync failed for customer %s: %s", customer.id, exc)
             return "failed"
 
-    def run_sync(self, session: Session, *, mode: SyncMode = "full") -> SyncTriggerResponse:
+    def run_sync(
+        self, session: Session, *, mode: SyncMode = "full"
+    ) -> SyncTriggerResponse:
         customers = list_active_customers(session)
         synced = failed = skipped = 0
         for customer in customers:
@@ -109,8 +117,9 @@ class CustomerSyncService:
     def get_status(self, session: Session) -> SyncStatusResponse:
         counts = dict(
             session.execute(
-                select(Q2CustomerSync.sync_status, func.count())
-                .group_by(Q2CustomerSync.sync_status)
+                select(Q2CustomerSync.sync_status, func.count()).group_by(
+                    Q2CustomerSync.sync_status
+                )
             ).all()
         )
         active_total = len(list_active_customers(session))

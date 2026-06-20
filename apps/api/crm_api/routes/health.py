@@ -48,12 +48,18 @@ def _validate_james_bootstrap() -> dict[str, object]:
     required_paths = _required_james_paths()
 
     missing = [
-        str(path.relative_to(repo_root)) for path in required_paths if not path.is_file()
+        str(path.relative_to(repo_root))
+        for path in required_paths
+        if not path.is_file()
     ]
     if missing:
         raise HTTPException(
             status_code=503,
-            detail={"status": "degraded", "reason": "missing_james_paths", "missing": missing},
+            detail={
+                "status": "degraded",
+                "reason": "missing_james_paths",
+                "missing": missing,
+            },
         )
 
     try:
@@ -61,7 +67,11 @@ def _validate_james_bootstrap() -> dict[str, object]:
     except (OSError, json.JSONDecodeError) as exc:
         raise HTTPException(
             status_code=503,
-            detail={"status": "degraded", "reason": "invalid_platform_json", "error": str(exc)},
+            detail={
+                "status": "degraded",
+                "reason": "invalid_platform_json",
+                "error": str(exc),
+            },
         ) from exc
 
     platform = manifest.get("platform")
@@ -69,7 +79,11 @@ def _validate_james_bootstrap() -> dict[str, object]:
     if platform != "anyjames":
         raise HTTPException(
             status_code=503,
-            detail={"status": "degraded", "reason": "unexpected_platform", "platform": platform},
+            detail={
+                "status": "degraded",
+                "reason": "unexpected_platform",
+                "platform": platform,
+            },
         )
     if remote_ci.get("provider") != "github":
         raise HTTPException(

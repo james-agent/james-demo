@@ -23,7 +23,9 @@ def test_list_customers_invalid_page_size() -> None:
 
 
 def test_list_customers_name_filter() -> None:
-    response = client.get("/api/v1/crm/customers", params={"name": "Alice", "pageSize": 25})
+    response = client.get(
+        "/api/v1/crm/customers", params={"name": "Alice", "pageSize": 25}
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["totalItems"] == 1

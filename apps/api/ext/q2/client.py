@@ -31,7 +31,9 @@ def mask_pii(value: str | None) -> str:
 class Q2HelixClient:
     """Q2 Helix REST client using HTTP Basic Auth."""
 
-    def __init__(self, config: Q2Config | None = None, *, timeout: float = 30.0) -> None:
+    def __init__(
+        self, config: Q2Config | None = None, *, timeout: float = 30.0
+    ) -> None:
         self.config = config or get_q2_config()
         self._timeout = timeout
 
@@ -51,7 +53,10 @@ class Q2HelixClient:
                     url,
                     json=payload,
                     auth=self._auth(),
-                    headers={"Content-Type": "application/json", "Accept": "application/json"},
+                    headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                    },
                 )
         except httpx.RequestError as exc:
             raise Q2ApiError(f"Q2 request failed: {exc}") from exc

@@ -5,7 +5,12 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, Query
 
 from crm_api.customers.schemas import CustomerDetail, CustomerListResponse
-from crm_api.customers.service import ALLOWED_PAGE_SIZES, filter_customers, get_customer_by_id, paginate_customers
+from crm_api.customers.service import (
+    ALLOWED_PAGE_SIZES,
+    filter_customers,
+    get_customer_by_id,
+    paginate_customers,
+)
 
 router = APIRouter(prefix="/api/v1/crm", tags=["crm-customers"])
 
@@ -19,7 +24,9 @@ async def list_customers(
     q: str | None = Query(None),
 ) -> CustomerListResponse:
     if pageSize not in ALLOWED_PAGE_SIZES:
-        raise HTTPException(status_code=400, detail="Invalid pageSize. Allowed values: 10, 25, 50.")
+        raise HTTPException(
+            status_code=400, detail="Invalid pageSize. Allowed values: 10, 25, 50."
+        )
     filtered = filter_customers(name=name, email=email, q=q)
     return paginate_customers(filtered, page=page, page_size=pageSize)
 

@@ -11,7 +11,11 @@ from sqlalchemy.orm import Session
 from crm_api.db import get_db_session
 from crm_api.models.q2_customer_sync import Q2CustomerSync
 from crm_api.services.customer_registry import get_customer_by_id
-from ext.q2.models.customer import CustomerOnboardRequest, Q2CustomerResponse, Q2CustomerSyncRecord
+from ext.q2.models.customer import (
+    CustomerOnboardRequest,
+    Q2CustomerResponse,
+    Q2CustomerSyncRecord,
+)
 from ext.q2.services.customer import Q2CustomerService
 from ext.q2.services.sync_customers import CustomerSyncService, customer_tag
 
@@ -34,8 +38,12 @@ async def onboard_customer(
     sync_service = CustomerSyncService(q2_service)
     outcome = sync_service.sync_one(session, customer, mode="full")
     if outcome == "failed":
-        row = session.scalar(select(Q2CustomerSync).where(Q2CustomerSync.customer_id == customer.id))
-        raise HTTPException(status_code=502, detail=row.last_error if row else "Q2 onboard failed")
+        row = session.scalar(
+            select(Q2CustomerSync).where(Q2CustomerSync.customer_id == customer.id)
+        )
+        raise HTTPException(
+            status_code=502, detail=row.last_error if row else "Q2 onboard failed"
+        )
     return q2_service.get_by_tag(customer_tag(customer.id))
 
 
@@ -50,12 +58,16 @@ async def get_customer_by_tag(
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
 
-@router.get("/customers/sync-records/{customer_id}", response_model=Q2CustomerSyncRecord)
+@router.get(
+    "/customers/sync-records/{customer_id}", response_model=Q2CustomerSyncRecord
+)
 async def get_sync_record(
     customer_id: UUID,
     session: Session = Depends(get_db_session),
 ) -> Q2CustomerSyncRecord:
-    row = session.scalar(select(Q2CustomerSync).where(Q2CustomerSync.customer_id == customer_id))
+    row = session.scalar(
+        select(Q2CustomerSync).where(Q2CustomerSync.customer_id == customer_id)
+    )
     if row is None:
         raise HTTPException(status_code=404, detail="Sync record not found")
     return Q2CustomerSyncRecord.model_validate(row)

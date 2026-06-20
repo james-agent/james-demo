@@ -15,7 +15,9 @@ from crm_api.db import Base
 class Q2CustomerSync(Base):
     __tablename__ = "q2_customer_sync"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     customer_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("customers.id", ondelete="CASCADE", onupdate="CASCADE"),
@@ -24,12 +26,23 @@ class Q2CustomerSync(Base):
         index=True,
     )
     q2_customer_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    tag: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
+    tag: Mapped[str] = mapped_column(
+        String(255), nullable=False, unique=True, index=True
+    )
     kyc_status: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    sync_status: Mapped[str] = mapped_column(String(32), nullable=False, default="pending", index=True)
+    sync_status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default="pending", index=True
+    )
     last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
-    last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    last_synced_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
     )

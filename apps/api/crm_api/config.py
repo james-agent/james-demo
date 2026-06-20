@@ -22,7 +22,9 @@ class Settings(BaseSettings):
     postgres_host: str = Field(default="db", alias="POSTGRES_HOST")
     postgres_port: int = Field(default=5432, alias="POSTGRES_PORT")
     postgres_user: str = Field(default="crm", alias="POSTGRES_USER")
-    postgres_password: str = Field(default="crm_dev_password", alias="POSTGRES_PASSWORD")
+    postgres_password: str = Field(
+        default="crm_dev_password", alias="POSTGRES_PASSWORD"
+    )
     postgres_db: str = Field(default="crm", alias="POSTGRES_DB")
 
     cors_origins: str = Field(
@@ -55,7 +57,9 @@ class Settings(BaseSettings):
     def async_database_url(self) -> str:
         if self.database_url_override:
             if self.database_url_override.startswith("postgresql://"):
-                return self.database_url_override.replace("postgresql://", "postgresql+asyncpg://", 1)
+                return self.database_url_override.replace(
+                    "postgresql://", "postgresql+asyncpg://", 1
+                )
             return self.database_url_override
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
@@ -64,7 +68,9 @@ class Settings(BaseSettings):
 
     @property
     def cors_origin_list(self) -> list[str]:
-        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+        return [
+            origin.strip() for origin in self.cors_origins.split(",") if origin.strip()
+        ]
 
 
 @lru_cache

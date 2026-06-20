@@ -25,11 +25,15 @@ REQUIRED_VARS = (
 def _report_env(config) -> None:
     print("Q2 Helix Gate Check")
     print("=" * 40)
-    print(f"  Q2_HELIX_API_URL: {'SET' if config.api_url else 'MISSING'} ({config.api_url or 'n/a'})")
+    print(
+        f"  Q2_HELIX_API_URL: {'SET' if config.api_url else 'MISSING'} ({config.api_url or 'n/a'})"
+    )
     print(f"  Q2_HELIX_API_KEY: {'SET' if config.api_key.strip() else 'MISSING'}")
     print(f"  Q2_HELIX_API_SECRET: {'SET' if config.api_secret.strip() else 'MISSING'}")
     program_preview = f"{config.program_id[:8]}..." if config.program_id else "n/a"
-    print(f"  Q2_HELIX_PROGRAM_ID: {'SET' if config.program_id.strip() else 'MISSING'} ({program_preview})")
+    print(
+        f"  Q2_HELIX_PROGRAM_ID: {'SET' if config.program_id.strip() else 'MISSING'} ({program_preview})"
+    )
     print(f"  Q2_ENVIRONMENT: {config.environment}")
 
 
@@ -46,7 +50,9 @@ def main() -> int:
     try:
         client = Q2HelixClient(config)
         program = client.test_connectivity()
-        program_id = program.get("programId") or program.get("data", {}).get("programId")
+        program_id = program.get("programId") or program.get("data", {}).get(
+            "programId"
+        )
         print("\nConnectivity: PASS")
         if program_id:
             print(f"Program ID confirmed: {program_id}")

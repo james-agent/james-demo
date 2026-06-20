@@ -5,7 +5,11 @@ from __future__ import annotations
 import math
 
 from crm_api.customers.mock_data import MOCK_CUSTOMERS
-from crm_api.customers.schemas import CustomerDetail, CustomerListResponse, CustomerSummary
+from crm_api.customers.schemas import (
+    CustomerDetail,
+    CustomerListResponse,
+    CustomerSummary,
+)
 
 ALLOWED_PAGE_SIZES = {10, 25, 50}
 VISIBLE_SEARCH_FIELDS = (

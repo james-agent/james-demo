@@ -110,6 +110,7 @@ All variables are documented in [`.env.example`](.env.example). Copy it to `.env
 | `API_HOST` | API bind address inside container |
 | `API_PORT` | Host port for CRM API |
 | `POSTGRES_*` | Database connection settings |
+| `DATABASE_URL` | Optional SQLAlchemy URL override (defaults to `POSTGRES_*`) |
 | `WEB_PORT` | Host port for Angular dev server |
 | `CORS_ORIGINS` | Allowed origins for API CORS |
 
@@ -172,10 +173,10 @@ PYTHONPATH=. pytest tests/ -q
 
 For product owners and stakeholders:
 
-- No customer registration, listing, editing, or deletion
+- No customer registration UI, listing, editing, or deletion screens
 - No Salesforce, email, or payment integrations
 - No user authentication flows
-- No database migrations (Alembic) or CI pipeline
+- No CI pipeline
 
 These will be addressed in follow-up stories.
 

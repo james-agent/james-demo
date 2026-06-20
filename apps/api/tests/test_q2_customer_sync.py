@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import uuid
 from unittest.mock import MagicMock
 
 import pytest
@@ -91,7 +90,9 @@ def test_duplicate_tag_treated_as_synced(session: Session) -> None:
     from ext.q2.exceptions import Q2DuplicateTagError
 
     mock_q2.onboard.side_effect = Q2DuplicateTagError("duplicate", status_code=409)
-    mock_q2.get_by_tag.return_value = Q2CustomerResponse(customer_id="q2-existing", tag=tag)
+    mock_q2.get_by_tag.return_value = Q2CustomerResponse(
+        customer_id="q2-existing", tag=tag
+    )
 
     service = CustomerSyncService(mock_q2)
     outcome = service.sync_one(session, customer, mode="full")
@@ -124,7 +125,9 @@ def test_idempotent_full_sync_skips_second_onboard(session: Session) -> None:
     service = CustomerSyncService(mock_q2)
     service.sync_one(session, customer, mode="full")
     mock_q2.reset_mock()
-    mock_q2.safe_get_by_tag.return_value = Q2CustomerResponse(customer_id="q2-1", tag=tag)
+    mock_q2.safe_get_by_tag.return_value = Q2CustomerResponse(
+        customer_id="q2-1", tag=tag
+    )
 
     outcome = service.sync_one(session, customer, mode="full")
     assert outcome == "skipped"

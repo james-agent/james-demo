@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import uuid
-from datetime import date
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -44,7 +43,11 @@ def import_mock_customers(session: Session) -> int:
 
 
 def list_active_customers(session: Session) -> list[Customer]:
-    stmt = select(Customer).where(Customer.is_active.is_(True)).order_by(Customer.created_at)
+    stmt = (
+        select(Customer)
+        .where(Customer.is_active.is_(True))
+        .order_by(Customer.created_at)
+    )
     return list(session.scalars(stmt).all())
 
 
@@ -52,6 +55,8 @@ def get_customer_by_id(session: Session, customer_id: uuid.UUID) -> Customer | N
     return session.get(Customer, customer_id)
 
 
-def get_customer_by_external_ref(session: Session, external_ref: str) -> Customer | None:
+def get_customer_by_external_ref(
+    session: Session, external_ref: str
+) -> Customer | None:
     stmt = select(Customer).where(Customer.external_ref == external_ref)
     return session.scalar(stmt)
