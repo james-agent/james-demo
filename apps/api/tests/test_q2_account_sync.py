@@ -167,6 +167,31 @@ def test_eligible_only_from_synced_customers(session: Session, monkeypatch) -> N
     mock_q2.create.assert_not_called()
 
 
+def test_status_shows_zero_eligible_when_all_provisioned(
+    session: Session, monkeypatch
+) -> None:
+    customer, customer_sync = _add_synced_customer(session)
+    tag = account_tag(customer.id)
+    session.add(
+        Q2AccountSync(
+            customer_id=customer.id,
+            q2_customer_id=customer_sync.q2_customer_id,
+            q2_account_id="acc-1",
+            product_id="100",
+            account_tag=tag,
+            sync_status="synced",
+        )
+    )
+    session.commit()
+
+    monkeypatch.setenv("Q2_HELIX_DEFAULT_PRODUCT_ID", "100")
+    get_q2_config.cache_clear()
+    status = AccountSyncService(MagicMock(spec=Q2AccountService)).get_status(session)
+    assert status.eligible == 0
+    assert status.provisioned == 1
+    assert status.total == 1
+
+
 def test_idempotent_rerun_skips_second_create(session: Session, monkeypatch) -> None:
     customer, customer_sync = _add_synced_customer(session)
     tag = account_tag(customer.id)

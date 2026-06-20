@@ -16,6 +16,7 @@ if str(API_ROOT) not in sys.path:
 from crm_api.config import get_settings  # noqa: E402
 from crm_api.db import Base  # noqa: E402
 from crm_api.models.customer import Customer  # noqa: F401, E402
+from crm_api.models.q2_account_sync import Q2AccountSync  # noqa: F401, E402
 from crm_api.models.q2_customer_sync import Q2CustomerSync  # noqa: F401, E402
 
 config = context.config
