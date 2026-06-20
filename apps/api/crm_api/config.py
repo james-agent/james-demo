@@ -30,6 +30,8 @@ class Settings(BaseSettings):
         alias="CORS_ORIGINS",
     )
 
+    database_url_override: str | None = Field(default=None, alias="DATABASE_URL")
+
     @field_validator("postgres_password")
     @classmethod
     def postgres_password_required(cls, value: str) -> str:
@@ -42,6 +44,8 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
+        if self.database_url_override:
+            return self.database_url_override
         return (
             f"postgresql://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
@@ -49,6 +53,10 @@ class Settings(BaseSettings):
 
     @property
     def async_database_url(self) -> str:
+        if self.database_url_override:
+            if self.database_url_override.startswith("postgresql://"):
+                return self.database_url_override.replace("postgresql://", "postgresql+asyncpg://", 1)
+            return self.database_url_override
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"

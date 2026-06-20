@@ -119,6 +119,55 @@ All variables are documented in [`.env.example`](.env.example). Copy it to `.env
 
 The `apps/api/crm_api/customers/` package is reserved for future customer-registration features. It contains documentation only — **no routes, models, or forms** are exposed.
 
+## Q2 Helix customer sync (JAMESD-4)
+
+Card 1 delivers Q2 Helix connectivity and bulk customer onboarding so every record in the local customer base is represented in Q2.
+
+### Environment variables
+
+Add to `.env` (see `.env.example`):
+
+| Variable | Description |
+|----------|-------------|
+| `Q2_HELIX_API_URL` | Helix base URL (sandbox default) |
+| `Q2_HELIX_API_KEY` | Basic auth username (API key) |
+| `Q2_HELIX_API_SECRET` | Basic auth password (API secret) |
+| `Q2_HELIX_PROGRAM_ID` | Program identifier |
+| `Q2_ENVIRONMENT` | `sandbox` or `production` |
+
+### Gate check
+
+```bash
+python3 scripts/q2_gate_check.py
+```
+
+Exits `0` on PASS, `2` on CONFIG_ERROR, `3` on API business error.
+
+### API endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/v1/q2/sync/customers?mode=full\|incremental` | Bulk sync local customers to Q2 |
+| `GET` | `/api/v1/q2/sync/customers/status` | Sync status counts |
+| `POST` | `/api/v1/q2/customers/onboard` | Onboard one local customer by UUID |
+| `GET` | `/api/v1/q2/customers/by-tag/{tag}` | Fetch Q2 customer by tag (local customer UUID) |
+
+Local customers are stored in PostgreSQL (`customers`, `q2_customer_sync` tables). On startup the API seeds the registry from CRM mock data when empty.
+
+### Database migrations
+
+```bash
+cd apps/api
+alembic upgrade head
+```
+
+### Tests
+
+```bash
+cd apps/api
+PYTHONPATH=. pytest tests/ -q
+```
+
 ## What is NOT in this delivery
 
 For product owners and stakeholders:

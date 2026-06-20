@@ -9,6 +9,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY crm_api ./crm_api
+COPY ext ./ext
+COPY db ./db
+COPY alembic.ini .
 
 EXPOSE 8000
 
