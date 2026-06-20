@@ -31,6 +31,7 @@ class Q2Config(BaseSettings):
     api_key: str = Field(default="", alias="Q2_HELIX_API_KEY")
     api_secret: str = Field(default="", alias="Q2_HELIX_API_SECRET")
     program_id: str = Field(default="", alias="Q2_HELIX_PROGRAM_ID")
+    default_product_id: str = Field(default="", alias="Q2_HELIX_DEFAULT_PRODUCT_ID")
     environment: Q2Environment = Field(default="sandbox", alias="Q2_ENVIRONMENT")
 
     @field_validator("environment", mode="before")

@@ -135,6 +135,7 @@ Add to `.env` (see `.env.example`):
 | `Q2_HELIX_API_SECRET` | Basic auth password (API secret) |
 | `Q2_HELIX_PROGRAM_ID` | Program identifier |
 | `Q2_ENVIRONMENT` | `sandbox` or `production` |
+| `Q2_HELIX_DEFAULT_PRODUCT_ID` | Default deposit product for account provisioning |
 
 ### Gate check
 
@@ -153,7 +154,35 @@ Exits `0` on PASS, `2` on CONFIG_ERROR, `3` on API business error.
 | `POST` | `/api/v1/q2/customers/onboard` | Onboard one local customer by UUID |
 | `GET` | `/api/v1/q2/customers/by-tag/{tag}` | Fetch Q2 customer by tag (local customer UUID) |
 
-Local customers are stored in PostgreSQL (`customers`, `q2_customer_sync` tables). On startup the API seeds the registry from CRM mock data when empty.
+Local customers are stored in PostgreSQL (`customers`, `q2_customer_sync`, `q2_account_sync` tables). On startup the API seeds the registry from CRM mock data when empty.
+
+## Q2 Helix account provisioning (JAMESD-4 Card 2)
+
+Card 2 provisions a Q2 deposit account for every customer successfully synced in Card 1.
+
+### Environment variables
+
+| Variable | Description |
+|----------|-------------|
+| `Q2_HELIX_DEFAULT_PRODUCT_ID` | Required for bulk account sync — Helix product id for `/account/create` |
+
+### API endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/v1/q2/accounts/create` | Provision account for one synced local customer |
+| `GET` | `/api/v1/q2/accounts/customer/{customerId}` | List Q2 accounts for a local customer |
+| `GET` | `/api/v1/q2/accounts/{id}` | Get account by Q2 account id |
+| `POST` | `/api/v1/q2/sync/accounts` | Bulk provision accounts for all synced customers |
+| `GET` | `/api/v1/q2/sync/accounts/status` | Account provisioning status counts |
+| `POST` | `/api/v1/q2/accounts/{id}/close` | Close account |
+| `POST` | `/api/v1/q2/accounts/{id}/lock` | Lock account |
+| `POST` | `/api/v1/q2/accounts/{id}/unlock` | Unlock account |
+| `POST` | `/api/v1/q2/accounts/{id}/stop-pay` | Create stop payment |
+| `GET` | `/api/v1/q2/accounts/{id}/stop-pay` | List stop payments |
+| `DELETE` | `/api/v1/q2/accounts/{id}/stop-pay/{stopPayId}` | Cancel stop payment |
+
+Account tags use the pattern `{local_customer_uuid}-primary` for idempotent provisioning.
 
 ### Database migrations
 

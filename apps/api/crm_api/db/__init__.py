@@ -45,6 +45,7 @@ def get_db_session() -> Generator[Session, None, None]:
 
 def init_db() -> None:
     from crm_api.models.customer import Customer  # noqa: F401
+    from crm_api.models.q2_account_sync import Q2AccountSync  # noqa: F401
     from crm_api.models.q2_customer_sync import Q2CustomerSync  # noqa: F401
 
     Base.metadata.create_all(bind=get_engine())
