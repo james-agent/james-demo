@@ -24,6 +24,14 @@ describe('SidebarComponent', () => {
     expect(labels).toEqual(NAV_MENU_ITEMS.map((item) => item.label));
   });
 
+  it('links Leads to the lead list route', () => {
+    const leadsLink = Array.from(
+      fixture.nativeElement.querySelectorAll('.sidebar-nav__link') as NodeListOf<HTMLAnchorElement>,
+    ).find((el) => el.textContent?.trim() === 'Leads');
+
+    expect(leadsLink?.getAttribute('href')).toBe('/leads');
+  });
+
   it('links Accounts to the customer list route', () => {
     const accountsLink = Array.from(
       fixture.nativeElement.querySelectorAll('.sidebar-nav__link') as NodeListOf<HTMLAnchorElement>,
@@ -45,18 +53,18 @@ describe('SidebarComponent', () => {
       '.sidebar-nav__link--disabled',
     );
 
-    expect(disabledLinks.length).toBe(5);
+    expect(disabledLinks.length).toBe(4);
   });
 
   it('shows Coming soon tooltip when a placeholder item is clicked', () => {
-    const leadsButton = fixture.nativeElement.querySelectorAll(
-      '.sidebar-nav__link',
-    )[1] as HTMLButtonElement;
+    const contactsButton = Array.from(
+      fixture.nativeElement.querySelectorAll('.sidebar-nav__link') as NodeListOf<HTMLElement>,
+    ).find((el) => el.textContent?.trim() === 'Contacts') as HTMLButtonElement;
 
-    leadsButton.click();
+    contactsButton.click();
     fixture.detectChanges();
 
-    const tooltip = leadsButton.querySelector('.coming-soon-tooltip');
+    const tooltip = contactsButton.querySelector('.coming-soon-tooltip');
     expect(tooltip?.textContent?.trim()).toBe('Coming soon');
   });
 });
