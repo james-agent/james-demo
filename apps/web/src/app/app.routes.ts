@@ -14,6 +14,13 @@ export const routes: Routes = [
     children: [
       { path: '', component: DashboardWelcomeComponent },
       {
+        path: 'leads',
+        loadComponent: () =>
+          import('./james_inception/crm/lead-list.component').then(
+            (m) => m.LeadListComponent,
+          ),
+      },
+      {
         path: 'accounts',
         loadComponent: () =>
           import('./james_inception/crm/customer-list.component').then(

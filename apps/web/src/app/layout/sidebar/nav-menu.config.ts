@@ -7,7 +7,7 @@ export interface NavMenuItem {
 
 export const NAV_MENU_ITEMS: NavMenuItem[] = [
   { id: 'dashboard', label: 'Dashboard', route: '/', disabled: false },
-  { id: 'leads', label: 'Leads', disabled: true },
+  { id: 'leads', label: 'Leads', route: '/leads', disabled: false },
   { id: 'accounts', label: 'Accounts', route: '/accounts', disabled: false },
   { id: 'contacts', label: 'Contacts', disabled: true },
   { id: 'opportunities', label: 'Oportunidades', route: '/inception_no_prod/crm/opportunities', disabled: false },
