@@ -173,8 +173,53 @@ npm test -- --no-watch --browsers=ChromeHeadless
 | Database | PostgreSQL | 16 (Alpine image in Compose) |
 | Orchestration | Docker Compose | v2 |
 
+## Q2 Helix connection (authentication gate)
+
+Server-side Helix connectivity lives under `james/ext/q2/` (owned by the Q2 authentication workflow). Credentials are **never** sent to the Angular app.
+
+### Environment
+
+Copy `.env.example` → `.env` and set:
+
+| Variable | Purpose |
+|----------|---------|
+| `Q2_HELIX_API_URL` | Base URL (`https://sandbox-api.helix.q2.com` or `https://api.helix.q2.com`) |
+| `Q2_HELIX_API_KEY` | HTTP Basic Auth username |
+| `Q2_HELIX_API_SECRET` | HTTP Basic Auth password |
+| `Q2_HELIX_PROGRAM_ID` | Program identifier (optional for connectivity; required for some provision flows) |
+| `Q2_ENVIRONMENT` | `sandbox` or `production` |
+
+Production requires IP whitelisting; sandbox and production whitelists may differ. See [Authentication](https://docs.helix.q2.com/reference/authentication), [Environment Differences](https://docs.helix.q2.com/reference/environment-differences), and [Test Connectivity](https://docs.helix.q2.com/reference/test-connectivity).
+
+### Gate check
+
+From the repository root (with dependencies from root `requirements.txt` installed):
+
+```bash
+pip install -r requirements.txt
+python3 scripts/q2_gate_check.py
+```
+
+The script reports `PASS`, `CONFIG_ERROR` (missing env), or `API_BUSINESS_ERROR` (401/403/network — report-only; fix credentials or whitelist). It never prints secret values.
+
+### Hub API
+
+```bash
+PYTHONPATH=. uvicorn james.hub.app:app --reload --host 0.0.0.0 --port 8001
+```
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/v1/q2/connection/status` | Environment + configured flags (no secrets) |
+| `POST /api/v1/q2/connection/test` | Live Helix connectivity + program product discovery |
+
+```bash
+PYTHONPATH=. pytest tests/q2 -q
+```
+
 ## Related documentation
 
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [Angular](https://angular.dev/)
 - [Docker Compose](https://docs.docker.com/compose/)
+- [Q2 Helix Authentication](https://docs.helix.q2.com/reference/authentication)
