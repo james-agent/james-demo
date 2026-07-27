@@ -212,6 +212,25 @@ PYTHONPATH=. uvicorn james.hub.app:app --reload --host 0.0.0.0 --port 8001
 |----------|---------|
 | `GET /api/v1/q2/connection/status` | Environment + configured flags (no secrets) |
 | `POST /api/v1/q2/connection/test` | Live Helix connectivity + program product discovery |
+| `POST /api/v1/q2/customers/onboard` | Onboard customer (Helix `/customer/onboard`) |
+| `GET /api/v1/q2/customers/{id}` | Get customer (KYC/status masked PII) |
+| `GET /api/v1/q2/customers/by-tag/{tag}` | Get customer by external tag |
+| `PUT /api/v1/q2/customers/{id}` | Update customer profile |
+| `POST /api/v1/q2/customers/{id}/archive` | Archive customer |
+| `POST /api/v1/q2/customers/{id}/lock` | Lock customer |
+| `POST /api/v1/q2/customers/{id}/unlock` | Unlock customer |
+| `GET/POST /api/v1/q2/customers/{id}/beneficiaries` | List / add beneficiaries |
+| `POST /api/v1/q2/accounts` | Create account |
+| `GET /api/v1/q2/accounts/by-customer/{customerId}` | List accounts |
+| `GET /api/v1/q2/accounts/{customerId}/{accountId}` | Account detail (balance/status/type) |
+| `POST /api/v1/q2/accounts/close` | Close account |
+| `POST /api/v1/q2/accounts/lock` | Lock account |
+| `POST /api/v1/q2/accounts/{customerId}/{accountId}/unlock` | Unlock account |
+| `POST /api/v1/q2/accounts/stop-pays` | Create check/ACH stop pay |
+| `GET /api/v1/q2/accounts/{customerId}/{accountId}/stop-pays` | List stop pays |
+| `POST /api/v1/q2/accounts/stop-pays/cancel` | Expire/cancel stop pay |
+
+Customer and account services live under `james/ext/q2/services/`; Helix credentials stay server-side.
 
 ```bash
 PYTHONPATH=. pytest tests/q2 -q

@@ -27,6 +27,10 @@ def _scan_codebase(root: Path) -> dict[str, str]:
         "Q2 config": root / "james" / "ext" / "q2" / "config.py",
         "Helix client": root / "james" / "ext" / "q2" / "client.py",
         "Connection routes": root / "james" / "ext" / "q2" / "routes" / "connection.py",
+        "Customer service": root / "james" / "ext" / "q2" / "services" / "customer.py",
+        "Account service": root / "james" / "ext" / "q2" / "services" / "account.py",
+        "Customer routes": root / "james" / "ext" / "q2" / "routes" / "customers.py",
+        "Account routes": root / "james" / "ext" / "q2" / "routes" / "accounts.py",
         "Hub app": root / "james" / "hub" / "app.py",
         "Gate script": root / "scripts" / "q2_gate_check.py",
     }
