@@ -16,6 +16,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crm_dev_password}
       POSTGRES_DB: ${POSTGRES_DB:-crm}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4200}
+      Q2_HELIX_API_URL: ${Q2_HELIX_API_URL:-https://sandbox-api.helix.q2.com}
+      Q2_HELIX_API_KEY: ${Q2_HELIX_API_KEY:-}
+      Q2_HELIX_API_SECRET: ${Q2_HELIX_API_SECRET:-}
+      Q2_HELIX_PROGRAM_ID: ${Q2_HELIX_PROGRAM_ID:-}
+      Q2_ENVIRONMENT: ${Q2_ENVIRONMENT:-sandbox}
 
   web:
     build:
