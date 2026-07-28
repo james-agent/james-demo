@@ -112,23 +112,65 @@ All variables are documented in [`.env.example`](.env.example). Copy it to `.env
 | `POSTGRES_*` | Database connection settings |
 | `WEB_PORT` | Host port for Angular dev server |
 | `CORS_ORIGINS` | Allowed origins for API CORS |
+| `Q2_HELIX_API_URL` | Helix base URL (sandbox or production) |
+| `Q2_HELIX_API_KEY` / `Q2_HELIX_API_SECRET` | HTTP Basic Auth credentials (server-side only) |
+| `Q2_HELIX_PROGRAM_ID` | Helix program identifier |
+| `Q2_HELIX_PRODUCT_ID` | Default product id used when creating accounts |
+| `Q2_ENVIRONMENT` | `sandbox` or `production` |
+| `Q2_MOCK_MODE` | `true` to stub Helix calls for local/CI |
+| `Q2_ALLOW_PLACEHOLDER_PII` | Allow sandbox placeholder KYC fields when CRM rows lack taxId/DOB/address |
 
 **Required:** `POSTGRES_PASSWORD` must be set (see `.env.example`). If missing, the API fails at startup with a message referencing `.env.example`.
 
-## CRM domain (reserved)
+## Q2 Helix provisioning (JAMESD-4)
 
-The `apps/api/crm_api/customers/` package is reserved for future customer-registration features. It contains documentation only — **no routes, models, or forms** are exposed.
+Server-side integration that provisions every CRM base customer into Q2 Helix (customer + account) with durable local↔Helix mapping.
 
-## What is NOT in this delivery
+Layout (reconciled under the API package):
 
-For product owners and stakeholders:
+- `apps/api/ext/q2/` — config, Helix client, models, repositories, adapters, orchestration, routes
+- `apps/api/scripts/q2_gate_check.py` (also `scripts/q2_gate_check.py`) — Gate A/C connectivity check
+- `apps/api/migrations/` — Alembic revision for `q2_customers`, `q2_accounts`, `q2_provision_runs`
 
-- No customer registration, listing, editing, or deletion
-- No Salesforce, email, or payment integrations
-- No user authentication flows
-- No database migrations (Alembic) or CI pipeline
+### Operator API
 
-These will be addressed in follow-up stories.
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/api/v1/q2/health` | Config presence + Helix connectivity (no secrets) |
+| `POST` | `/api/v1/q2/provision` | Idempotent provision of local CRM customers |
+| `GET` | `/api/v1/q2/provision/{run_id}` | Provision run status |
+| `POST` | `/api/v1/q2/customers/onboard` | Helix customer onboard helper |
+| `GET` | `/api/v1/q2/customers/by-tag/{tag}` | Customer getByTag helper |
+| `POST` | `/api/v1/q2/accounts/create` | Helix account create helper |
+| `GET` | `/api/v1/q2/accounts/by-tag/{tag}` | Account getByTag helper |
+
+### Gate check
+
+```bash
+cd apps/api
+python3 scripts/q2_gate_check.py
+# or from repo root:
+python3 scripts/q2_gate_check.py
+```
+
+Results: `PASS` (exit 0), `CONFIG_ERROR` (exit 2), `API_BUSINESS_ERROR` (exit 3).
+
+### Migrations
+
+```bash
+cd apps/api
+alembic upgrade head
+```
+
+The API also calls `create_all` on startup so local/dev tables exist even before Alembic is applied.
+
+### API tests
+
+```bash
+cd apps/api
+pip install -r requirements.txt
+pytest -q
+```
 
 ## CRM landing dashboard (JAMESD-3)
 

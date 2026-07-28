@@ -29,6 +29,8 @@ class Settings(BaseSettings):
         default="http://localhost:4200",
         alias="CORS_ORIGINS",
     )
+    # Prefer CRM_DATABASE_URL so platform DATABASE_URL (James) is never reused by accident.
+    database_url_override: str | None = Field(default=None, alias="CRM_DATABASE_URL")
 
     @field_validator("postgres_password")
     @classmethod
@@ -42,6 +44,8 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
+        if self.database_url_override:
+            return self.database_url_override
         return (
             f"postgresql://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
