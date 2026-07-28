@@ -121,6 +121,9 @@ All variables are documented in [`.env.example`](.env.example). Copy it to `.env
 | `Q2_HELIX_API_SECRET` | Helix Basic Auth password (API secret) |
 | `Q2_HELIX_PROGRAM_ID` | Helix program identifier |
 | `Q2_ENVIRONMENT` | `sandbox` or `production` |
+| `Q2_HELIX_DEFAULT_PRODUCT_ID` | Default Helix product id for provisioned Open accounts (required for sync) |
+| `Q2_HELIX_ACCOUNT_NAME_TEMPLATE` | Optional account display name template (`{full_name}`, `{tag}`) |
+| `Q2_DATABASE_URL` | Optional override for local customer DB (defaults to SQLite under `./data`) |
 
 **Required:** `POSTGRES_PASSWORD` must be set (see `.env.example`). If missing, the API fails at startup with a message referencing `.env.example`.
 
@@ -154,9 +157,32 @@ Middleware-only CRM API routes proxy Helix customer and account lifecycle operat
 |------|---------|--------|
 | Customers | `ext/q2/services/customer.py` | `/api/v1/q2/customers/*` |
 | Accounts | `ext/q2/services/account.py` | `/api/v1/q2/accounts/*` |
+| Provisioning | `ext/q2/services/provisioner.py` | `/api/v1/q2/provisioning/*` |
 
 Helix calls always go through `get_helix_client()`. PII fields (`taxId`, `accountNumber`, …)
 are masked in logs and API responses.
+
+### Local customer provisioning
+
+Every active row in the local `customers` table can be provisioned into Helix (customer by unique
+`tag`, then at least one Open account for `Q2_HELIX_DEFAULT_PRODUCT_ID`). Sync is idempotent:
+re-runs reuse `customer/getByTag` and existing Open accounts instead of duplicating.
+
+| Endpoint | Purpose |
+|----------|---------|
+| `POST /api/v1/q2/provisioning/customers/sync` | Bulk provision all active local customers |
+| `POST /api/v1/q2/provisioning/customers/{local_id}/sync` | Provision one local customer |
+
+Schema: `customers` + `customer_q2_accounts` (see Alembic migration
+`migrations/versions/001_create_customers_and_q2_accounts.py`). Apply with:
+
+```bash
+alembic upgrade head   # against Postgres when Q2_DATABASE_URL / POSTGRES_* are set
+```
+
+Without Postgres, the API falls back to a local SQLite file under `./data/q2_local.db` and
+creates tables on first provision call. A minimal seed base (Ada / Alan / Grace) is inserted
+when the table is empty.
 
 ## CRM domain (reserved)
 
@@ -166,12 +192,11 @@ The `apps/api/crm_api/customers/` package is reserved for future customer-regist
 
 For product owners and stakeholders:
 
-- No customer registration, listing, editing, or deletion
 - No Salesforce, email, or payment integrations
 - No user authentication flows
-- No database migrations (Alembic) or CI pipeline
+- No Q2 Boltss/Open UI account-opening flows (Helix middleware provisioning only)
 
-These will be addressed in follow-up stories.
+Follow-up stories may expand CRM registration UI and additional Helix features.
 
 ## CRM landing dashboard (JAMESD-3)
 

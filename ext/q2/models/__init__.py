@@ -1,4 +1,4 @@
-"""Q2 Helix domain models (customer + account)."""
+"""Q2 Helix domain models (customer + account + local persistence)."""
 
 from ext.q2.models.account import (
     AccountCreateRequest,
@@ -12,6 +12,7 @@ from ext.q2.models.customer import (
     CustomerUpdateRequest,
     Q2Customer,
 )
+from ext.q2.models.local_customer import LocalCustomer, LocalCustomerQ2Account
 
 __all__ = [
     "AccountCreateRequest",
@@ -19,6 +20,8 @@ __all__ = [
     "CustomerBeneficiary",
     "CustomerOnboardRequest",
     "CustomerUpdateRequest",
+    "LocalCustomer",
+    "LocalCustomerQ2Account",
     "Q2Account",
     "Q2Customer",
     "StopPayRequest",

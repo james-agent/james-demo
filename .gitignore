@@ -31,6 +31,9 @@ Thumbs.db
 # Docker
 postgres_data/
 
+# Local Q2 SQLite fallback
+data/
+
 # Test / coverage
 .coverage
 htmlcov/

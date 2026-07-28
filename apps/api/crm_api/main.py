@@ -18,6 +18,7 @@ from crm_api.config import get_settings
 from crm_api.routes import crm_customers, health
 from ext.q2.routes import accounts as q2_accounts
 from ext.q2.routes import customers as q2_customers
+from ext.q2.routes import provisioning as q2_provisioning
 
 settings = get_settings()
 
@@ -39,3 +40,4 @@ app.include_router(health.router)
 app.include_router(crm_customers.router)
 app.include_router(q2_customers.router)
 app.include_router(q2_accounts.router)
+app.include_router(q2_provisioning.router)

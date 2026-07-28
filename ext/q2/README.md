@@ -14,10 +14,17 @@ and `routes/`. They must call Helix only via `get_helix_client()`.
 |--------|----------------|
 | `config.py` | `get_q2_config()` — load `Q2_HELIX_*` from env / `.env` |
 | `client.py` | `HelixClient` / `get_helix_client()` — Basic Auth HTTP facade |
-| `services/` | Customer + account Helix operations |
-| `models/` | Pydantic request/response models |
-| `routes/` | FastAPI `/api/v1/q2/*` routers |
+| `services/` | Customer + account Helix operations + `CustomerAccountProvisioner` |
+| `models/` | Pydantic Helix models + SQLAlchemy `LocalCustomer` ORM |
+| `repository/` | Local customer DB access (load/persist strategy) |
+| `db.py` | Engine/session helpers for local persistence |
+| `routes/` | FastAPI `/api/v1/q2/*` routers (customers, accounts, provisioning) |
 | `scripts/q2_gate_check.py` | CLI gate: PASS / CONFIG_ERROR / API_BUSINESS_ERROR |
+
+Provisioning requires `Q2_HELIX_DEFAULT_PRODUCT_ID`. Endpoints:
+
+- `POST /api/v1/q2/provisioning/customers/sync`
+- `POST /api/v1/q2/provisioning/customers/{local_id}/sync`
 
 ## Authentication
 
