@@ -155,6 +155,15 @@ python3 scripts/q2_gate_check.py
 
 Results: `PASS` (exit 0), `CONFIG_ERROR` (exit 2), `API_BUSINESS_ERROR` (exit 3).
 
+### Security API gate (PING)
+
+```bash
+cd apps/api
+python3 scripts/q2_security_ping.py
+```
+
+Confirms `GET /api/v1/q2/health` succeeds and the payload never echoes Helix secrets.
+
 ### Migrations
 
 ```bash
