@@ -20,6 +20,7 @@ CONFIGURED = Q2Config(
     api_secret="test-secret",
     program_id="100",
     environment="sandbox",
+    default_product_id="7",
 )
 
 
@@ -67,6 +68,7 @@ def _q2_config(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("Q2_HELIX_API_SECRET", CONFIGURED.api_secret)
     monkeypatch.setenv("Q2_HELIX_PROGRAM_ID", CONFIGURED.program_id)
     monkeypatch.setenv("Q2_ENVIRONMENT", "sandbox")
+    monkeypatch.setenv("Q2_DEFAULT_PRODUCT_ID", CONFIGURED.default_product_id)
 
 
 def test_onboard_customer_masks_tax_id() -> None:

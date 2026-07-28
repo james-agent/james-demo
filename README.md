@@ -1,8 +1,6 @@
-# james-demo — CRM Monorepo Foundation
+# james-demo — CRM Monorepo
 
-Technical scaffolding for a future **CRM customer-registration product**. This repository provides a reproducible local development environment with **FastAPI**, **Angular**, and **PostgreSQL** orchestrated via Docker Compose.
-
-> **Delivery scope (JAMESD-1):** infrastructure and project structure only. There are **no** customer registration screens, CRUD endpoints, or external integrations in this delivery. Future stories will build on this base.
+Technical scaffolding for a **CRM customer-registration product** with **FastAPI**, **Angular**, and **PostgreSQL**, plus a **Q2 Helix** integration that provisions Helix customers and accounts from the local customer base.
 
 ## Monorepo layout
 
@@ -110,25 +108,56 @@ All variables are documented in [`.env.example`](.env.example). Copy it to `.env
 | `API_HOST` | API bind address inside container |
 | `API_PORT` | Host port for CRM API |
 | `POSTGRES_*` | Database connection settings |
+| `DATABASE_URL` | Optional SQLAlchemy URL override (e.g. SQLite for local tests) |
 | `WEB_PORT` | Host port for Angular dev server |
 | `CORS_ORIGINS` | Allowed origins for API CORS |
+| `Q2_HELIX_API_URL` | Helix base URL (sandbox or production) |
+| `Q2_HELIX_API_KEY` / `Q2_HELIX_API_SECRET` | Helix HTTP Basic Auth credentials |
+| `Q2_HELIX_PROGRAM_ID` | Helix program id |
+| `Q2_ENVIRONMENT` | `sandbox` or `production` |
+| `Q2_DEFAULT_PRODUCT_ID` | Helix `productId` used when sync creates accounts |
 
 **Required:** `POSTGRES_PASSWORD` must be set (see `.env.example`). If missing, the API fails at startup with a message referencing `.env.example`.
 
-## CRM domain (reserved)
+## Q2 Helix customer + account provisioning
 
-The `apps/api/crm_api/customers/` package is reserved for future customer-registration features. It contains documentation only — **no routes, models, or forms** are exposed.
+Local `customers` rows are the identity source of truth. Helix `tag` stores the local customer UUID for idempotent correlation (`/customer/getByTag`, `/account/getByTag`). Account tags use `{customer_id}:primary`.
 
-## What is NOT in this delivery
+### Connectivity gate
 
-For product owners and stakeholders:
+```bash
+# From repo root (with Q2_HELIX_* set)
+python3 scripts/q2_gate_check.py
+```
 
-- No customer registration, listing, editing, or deletion
-- No Salesforce, email, or payment integrations
-- No user authentication flows
-- No database migrations (Alembic) or CI pipeline
+Reports `PASS`, `CONFIG_ERROR` (missing/invalid credentials), or `API_BUSINESS_ERROR` (reachable Helix business/program issue). Missing config is never treated as success.
 
-These will be addressed in follow-up stories.
+### Database migration
+
+```bash
+cd apps/api
+alembic upgrade head
+```
+
+On API startup, `init_db()` also ensures tables exist for local/demo databases.
+
+### Key APIs
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `POST` | `/api/v1/customers` | Persist a local customer (KYC fields for Helix onboard) |
+| `GET` | `/api/v1/customers` | List local customers + Q2 linkage status |
+| `POST` | `/api/v1/q2/customers/onboard` | Helix customer onboard proxy |
+| `GET` | `/api/v1/q2/customers/by-tag/{tag}` | Helix getByTag |
+| `POST` | `/api/v1/q2/accounts/create` | Helix account create |
+| `POST` | `/api/v1/q2/sync/customers` | Bulk ensure Helix customer + account for all local customers |
+| `POST` | `/api/v1/q2/sync/customers/{id}` | Sync a single local customer |
+
+Sync outcomes per row: `created`, `linked_existing`, `already_linked`, `skipped_incomplete`, or `failed`. Incomplete KYC skips that row without aborting the batch. Tax IDs and full account numbers are never written to application logs or API responses.
+
+## CRM mock listing (inception)
+
+The `apps/api/crm_api/customers/` package still serves the mock CRM list/detail UI under `/api/v1/crm/customers`. Durable Q2 linkage uses the SQL `customers` table via `/api/v1/customers` and `/api/v1/q2/sync/*`.
 
 ## CRM landing dashboard (JAMESD-3)
 

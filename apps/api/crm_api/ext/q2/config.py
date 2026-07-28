@@ -27,10 +27,21 @@ class Q2Config:
     api_secret: str
     program_id: str
     environment: str
+    default_product_id: str
 
     @property
     def base_url(self) -> str:
         return self.api_url.rstrip("/")
+
+    @property
+    def product_id(self) -> int | None:
+        value = (self.default_product_id or "").strip()
+        if not value:
+            return None
+        try:
+            return int(value)
+        except ValueError:
+            return None
 
     @property
     def is_configured(self) -> bool:
@@ -75,6 +86,7 @@ def get_q2_config() -> Q2Config:
         api_secret=_env("Q2_HELIX_API_SECRET", "Q2_API_SECRET"),
         program_id=_env("Q2_HELIX_PROGRAM_ID", "Q2_PROGRAM_ID"),
         environment=environment if environment in {"sandbox", "production"} else "sandbox",
+        default_product_id=_env("Q2_DEFAULT_PRODUCT_ID", "Q2_HELIX_PRODUCT_ID"),
     )
 
 
