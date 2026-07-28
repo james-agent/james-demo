@@ -83,16 +83,30 @@ class HelixClient:
     def __exit__(self, *args: object) -> None:
         self.close()
 
-    def _request(self, method: str, path: str, **kwargs: Any) -> Any:
-        url_path = path if path.startswith("/") else f"/{path}"
+    def request(
+        self,
+        method: str,
+        relative_path: str,
+        body: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Facade for Helix HTTP I/O using base URL + relative path only.
+
+        Downstream services must call this (or the typed helpers) instead of
+        recreating Basic Auth or absolute Helix URLs.
+        """
+        url_path = relative_path if relative_path.startswith("/") else f"/{relative_path}"
         logger.info(
             "helix_request method=%s path=%s environment=%s",
             method,
             url_path,
             self.config.environment,
         )
+        request_kwargs = dict(kwargs)
+        if body is not None:
+            request_kwargs["json"] = body
         try:
-            response = self._client.request(method, url_path, **kwargs)
+            response = self._client.request(method, url_path, **request_kwargs)
         except httpx.TimeoutException as exc:
             raise HelixAPIError(
                 "Helix request timed out — check network/firewall and API URL",
@@ -163,7 +177,7 @@ class HelixClient:
         Success returns a JSON welcome payload.
         See https://docs.helix.q2.com/reference/test-connectivity
         """
-        return self._request("GET", "/")
+        return self.request("GET", "/")
 
     def get_program(self, program_id: str | None = None) -> dict[str, Any]:
         """Call ``/program/get`` to confirm program configuration and products."""
@@ -171,7 +185,7 @@ class HelixClient:
         body: dict[str, Any] = {}
         if pid:
             body["programId"] = pid
-        return self._request("POST", "/program/get", json=body or None)
+        return self.request("POST", "/program/get", body=body or None)
 
     def discover_products(self, program_payload: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """Extract product list from a ``/program/get`` response without logging secrets."""
@@ -181,3 +195,8 @@ class HelixClient:
         if isinstance(products, list):
             return [p for p in products if isinstance(p, dict)]
         return []
+
+
+def get_helix_client(config: Q2Config | None = None, *, timeout: float = DEFAULT_TIMEOUT) -> HelixClient:
+    """Factory for a configured Helix client (no global mutable singleton)."""
+    return HelixClient(config=config, timeout=timeout)

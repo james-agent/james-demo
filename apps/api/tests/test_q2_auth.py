@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ext.q2.client import HelixAPIError, HelixClient  # noqa: E402
+from ext.q2.client import HelixAPIError, HelixClient, get_helix_client  # noqa: E402
 from ext.q2.config import Q2Config, get_q2_config  # noqa: E402
 
 
@@ -101,4 +101,18 @@ def test_discover_products_from_payload() -> None:
         {"data": {"products": [{"productId": "checking"}, {"productId": "savings"}]}}
     )
     assert [p["productId"] for p in products] == ["checking", "savings"]
+    client.close()
+
+
+def test_get_helix_client_factory() -> None:
+    cfg = Q2Config(
+        api_url="https://sandbox-api.helix.q2.com",
+        api_key="k",
+        api_secret="s",
+        program_id="p",
+        environment="sandbox",
+    )
+    client = get_helix_client(cfg)
+    assert isinstance(client, HelixClient)
+    assert client.config is cfg
     client.close()

@@ -3,6 +3,14 @@
 Exclusive owner: **q2-authentication**. Other agents only **run**
 `python3 scripts/q2_gate_check.py`; they must not edit this package.
 
+## Modules
+
+| Module | Responsibility |
+|--------|----------------|
+| `config.py` | `get_q2_config()` — load `Q2_HELIX_*` from env / `.env` |
+| `client.py` | `HelixClient` / `get_helix_client()` — Basic Auth HTTP facade |
+| `scripts/q2_gate_check.py` | CLI gate: PASS / CONFIG_ERROR / API_BUSINESS_ERROR |
+
 ## Authentication
 
 - HTTP Basic Auth on every request (`Authorization: Basic base64(api_key:api_secret)`)
@@ -15,6 +23,14 @@ Exclusive owner: **q2-authentication**. Other agents only **run**
 |-------------|---------|
 | Sandbox | `https://sandbox-api.helix.q2.com` |
 | Production | `https://api.helix.q2.com` |
+
+## Gate check
+
+From the repository root (after copying `.env.example` → `.env` and filling secrets):
+
+```bash
+python3 scripts/q2_gate_check.py
+```
 
 ## IP whitelisting (production)
 
@@ -32,3 +48,4 @@ reuse TCP connections and reduce handshake overhead.
 
 - Store credentials only in `.env` / secrets manager — never in source or logs
 - Middleware-only access — never call Helix from browser/frontend code
+- Downstream code must import `get_helix_client()` / `get_q2_config()` only; do not recreate auth

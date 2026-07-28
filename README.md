@@ -24,6 +24,10 @@ james-demo/
 │       │   └── shared/      # Coming soon tooltip directive
 │       ├── proxy.conf.json  # Dev proxy: /api → CRM API
 │       └── Dockerfile
+├── ext/
+│   └── q2/                  # Q2 Helix connection (config + HTTP client)
+├── scripts/
+│   └── q2_gate_check.py     # Helix connectivity gate check
 ├── infra/
 │   └── docker/              # Local infrastructure notes
 ├── docker-compose.yml       # API + web + PostgreSQL
@@ -112,8 +116,33 @@ All variables are documented in [`.env.example`](.env.example). Copy it to `.env
 | `POSTGRES_*` | Database connection settings |
 | `WEB_PORT` | Host port for Angular dev server |
 | `CORS_ORIGINS` | Allowed origins for API CORS |
+| `Q2_HELIX_API_URL` | Helix base URL (sandbox or production) |
+| `Q2_HELIX_API_KEY` | Helix Basic Auth username (API key) |
+| `Q2_HELIX_API_SECRET` | Helix Basic Auth password (API secret) |
+| `Q2_HELIX_PROGRAM_ID` | Helix program identifier |
+| `Q2_ENVIRONMENT` | `sandbox` or `production` |
 
 **Required:** `POSTGRES_PASSWORD` must be set (see `.env.example`). If missing, the API fails at startup with a message referencing `.env.example`.
+
+## Q2 Helix connection gate check
+
+Before any Q2 Helix feature work, copy env placeholders and run the gate check from the repository root:
+
+```bash
+cp .env.example .env
+# Fill Q2_HELIX_API_KEY, Q2_HELIX_API_SECRET, Q2_HELIX_PROGRAM_ID (never commit real secrets)
+python3 scripts/q2_gate_check.py
+```
+
+The script loads `ext/q2` config, prints SET/MISSING for each required variable (never secret values), then tests Helix connectivity (`GET /`) and `POST /program/get`. Results classify as:
+
+| Result | Meaning |
+|--------|---------|
+| `PASS` | Credentials present; connectivity and program lookup succeeded |
+| `CONFIG_ERROR` | Missing env vars, bad auth (401/403), or network/config failure |
+| `API_BUSINESS_ERROR` | Helix returned a business/HTTP error (e.g. 404/5xx) |
+
+Connection structure lives only under `ext/q2/` (`get_q2_config()`, `get_helix_client()`). Downstream services must reuse that client — do not recreate Basic Auth or base URL logic elsewhere. See also `ext/q2/README.md`.
 
 ## CRM domain (reserved)
 
