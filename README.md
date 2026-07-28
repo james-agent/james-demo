@@ -142,7 +142,21 @@ The script loads `ext/q2` config, prints SET/MISSING for each required variable 
 | `CONFIG_ERROR` | Missing env vars, bad auth (401/403), or network/config failure |
 | `API_BUSINESS_ERROR` | Helix returned a business/HTTP error (e.g. 404/5xx) |
 
-Connection structure lives only under `ext/q2/` (`get_q2_config()`, `get_helix_client()`). Downstream services must reuse that client — do not recreate Basic Auth or base URL logic elsewhere. See also `ext/q2/README.md`.
+Connection structure lives only under `ext/q2/` (`get_q2_config()`, `get_helix_client()`).
+Downstream customer/account services reuse that client — do not recreate Basic Auth or base URL
+logic elsewhere. See also `ext/q2/README.md`.
+
+## Q2 Helix customer & account management
+
+Middleware-only CRM API routes proxy Helix customer and account lifecycle operations:
+
+| Area | Service | Routes |
+|------|---------|--------|
+| Customers | `ext/q2/services/customer.py` | `/api/v1/q2/customers/*` |
+| Accounts | `ext/q2/services/account.py` | `/api/v1/q2/accounts/*` |
+
+Helix calls always go through `get_helix_client()`. PII fields (`taxId`, `accountNumber`, …)
+are masked in logs and API responses.
 
 ## CRM domain (reserved)
 

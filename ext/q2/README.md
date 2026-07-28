@@ -1,7 +1,12 @@
 # Q2 Helix connection package
 
-Exclusive owner: **q2-authentication**. Other agents only **run**
-`python3 scripts/q2_gate_check.py`; they must not edit this package.
+Exclusive owner of **connection structure** (config + HTTP client + gate script):
+**q2-authentication**. Other agents only **run** `python3 scripts/q2_gate_check.py`;
+they must not edit `config.py` / `client.py` / the gate script.
+
+Domain services and FastAPI routes for customers/accounts are added by the
+customer-management and account-management agents under `services/`, `models/`,
+and `routes/`. They must call Helix only via `get_helix_client()`.
 
 ## Modules
 
@@ -9,6 +14,9 @@ Exclusive owner: **q2-authentication**. Other agents only **run**
 |--------|----------------|
 | `config.py` | `get_q2_config()` — load `Q2_HELIX_*` from env / `.env` |
 | `client.py` | `HelixClient` / `get_helix_client()` — Basic Auth HTTP facade |
+| `services/` | Customer + account Helix operations |
+| `models/` | Pydantic request/response models |
+| `routes/` | FastAPI `/api/v1/q2/*` routers |
 | `scripts/q2_gate_check.py` | CLI gate: PASS / CONFIG_ERROR / API_BUSINESS_ERROR |
 
 ## Authentication
