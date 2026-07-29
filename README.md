@@ -2,7 +2,7 @@
 
 Technical scaffolding for a future **CRM customer-registration product**. This repository provides a reproducible local development environment with **FastAPI**, **Angular**, and **PostgreSQL** orchestrated via Docker Compose.
 
-> **Delivery scope (JAMESD-1):** infrastructure and project structure only. There are **no** customer registration screens, CRUD endpoints, or external integrations in this delivery. Future stories will build on this base.
+> **Delivery scope:** CRM monorepo foundation (JAMESD-1), landing dashboard (JAMESD-3), and Q2 Helix customer/account provisioning under `/api/v1/q2/` (JAMESD-4).
 
 ## Monorepo layout
 
