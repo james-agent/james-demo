@@ -9,6 +9,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY crm_api ./crm_api
+COPY ext ./ext
+COPY scripts ./scripts
+COPY migrations ./migrations
+COPY alembic.ini ./alembic.ini
 
 EXPOSE 8000
 
